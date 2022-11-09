@@ -2,8 +2,12 @@ import { Button, TextField, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { useRef } from "react";
 import { useForm } from "react-hook-form";
+import { httpApi } from "src/api/http";
+import { useRouter } from "next/router";
 
 export default function Register() {
+  const router = useRouter();
+  console.log(router);
   const {
     register,
     watch,
@@ -11,13 +15,26 @@ export default function Register() {
     formState: { errors },
   } = useForm();
   const password = useRef({});
+  const email = useRef({});
   password.current = watch("password", "");
-  console.log(password.current);
-  const onSubmit = (data) => {
-    console.log(data);
-    console.log("?", errors.email);
-  };
+  email.current = watch("email", "");
+
   const emailRegRex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
+
+  const handleClickLogin = async () => {
+    const result = await httpApi.post("/auth/login", {
+      email: email.current,
+      password: password.current,
+    });
+    if (result.status === 201) {
+      router.push("/");
+    }
+    console.log(result.status, "결과");
+  };
+
+  const onSubmit = async () => {
+    handleClickLogin();
+  };
 
   return (
     <Box
@@ -64,7 +81,8 @@ export default function Register() {
             fullWidth
             type="submit"
             variant="contained"
-            sx={{ marginBottom: 10 }}>
+            sx={{ marginBottom: 10 }}
+            onClick={handleClickLogin}>
             Sign In
           </Button>
         </div>
