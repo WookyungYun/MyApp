@@ -6,12 +6,12 @@ import { useForm } from "react-hook-form";
 import { httpApi } from "src/api/http";
 import { useRouter } from "next/router";
 import { useRecoilState } from "recoil";
-import { loadingState } from "src/state/Login";
+import { logInState } from "../../state/LogIn";
 
 export default function Register() {
   const router = useRouter();
 
-  const [loading, setLoading] = useRecoilState(loadingState);
+  const [logIn, setIsLogIn] = useRecoilState(logInState);
 
   console.log(router);
 
@@ -34,7 +34,7 @@ export default function Register() {
       email: email.current,
       password: password.current,
     });
-    setLoading(true);
+    setIsLogIn(true);
     if (result.status === 201) {
       router.push("/");
     }
@@ -44,7 +44,7 @@ export default function Register() {
 
   const onSubmit = async () => {
     handleClickLogin();
-    setLoading(true);
+    setIsLogIn(true);
   };
 
   return (
@@ -90,7 +90,7 @@ export default function Register() {
         <div>
           <LoadingButton
             fullWidth
-            loading={loading}
+            loading={logIn}
             type="submit"
             variant="contained"
             sx={{ marginBottom: 10 }}

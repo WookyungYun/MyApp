@@ -1,4 +1,5 @@
 import { Button, Link, TextField, Typography } from "@mui/material";
+import { httpApi } from "src/api/http";
 import { Box } from "@mui/system";
 import { useRouter } from "next/router";
 import { useRef } from "react";
@@ -12,11 +13,18 @@ export default function Register() {
     handleSubmit,
     formState: { errors, isSubmitSuccessful },
   } = useForm();
+  const email = useRef({});
   const password = useRef({});
   password.current = watch("password", "");
-  const onSubmit = (data) => {
-    console.log(data);
-    if (isSubmitSuccessful) router.push("/login");
+
+  const onSubmit = async () => {
+    const result = await httpApi.post("/auth/signup", {
+      email: email.current,
+      password: password.current,
+    });
+    console.log(result);
+    alert("회원가입 성공!");
+    router.push("/login");
   };
   const emailRegRex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
 
