@@ -1,21 +1,27 @@
-import { Button, Link, TextField, Typography } from "@mui/material";
+import { Link, TextField, Typography } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { Box } from "@mui/system";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { useForm } from "react-hook-form";
 import { httpApi } from "src/api/http";
 import { useRouter } from "next/router";
+import { useRecoilState } from "recoil";
+import { loadingState } from "src/state/Login";
 
 export default function Register() {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
+
+  const [loading, setLoading] = useRecoilState(loadingState);
+
   console.log(router);
+
   const {
     register,
     watch,
     handleSubmit,
     formState: { errors },
   } = useForm();
+
   const password = useRef({});
   const email = useRef({});
   password.current = watch("password", "");
@@ -32,10 +38,13 @@ export default function Register() {
     if (result.status === 201) {
       router.push("/");
     }
+    console.log(result.data.access_token);
+    localStorage.setItem("token", result.data.access_token);
   };
 
   const onSubmit = async () => {
     handleClickLogin();
+    setLoading(true);
   };
 
   return (
