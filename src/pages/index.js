@@ -6,6 +6,7 @@ import { Typography } from "@mui/material";
 
 export default function Home() {
   const [isLogIn, setIsLogIn] = useRecoilState(logInState);
+
   const menuData = useMemo(() => {
     if (isLogIn === null) return [];
     if (isLogIn) return MENU_LOGIN_STATE;
@@ -13,9 +14,8 @@ export default function Home() {
   }, [isLogIn]);
 
   useEffect(() => {
-    console.log(123);
     if (localStorage.getItem("token")) setIsLogIn(true);
-  }, []);
+  }, [setIsLogIn]);
 
   const onClickLogout = () => {
     localStorage.removeItem("token");
