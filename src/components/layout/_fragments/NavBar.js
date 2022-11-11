@@ -5,9 +5,9 @@ export default function NavBar() {
     alert("준비중입니다.");
   };
   return (
-    <Box display="flex" width="100%" padding="10px">
+    <Box display="flex" padding="10px">
       <Button
-        sx={{ width: "50%", height: 50 }}
+        sx={{ flexGrow: 1 }}
         variant="contained"
         display="flex"
         justifyContent="center"
@@ -17,7 +17,7 @@ export default function NavBar() {
         </Typography>
       </Button>
       <Button
-        sx={{ width: "50%", height: 50 }}
+        sx={{ flexGrow: 1 }}
         variant="contained"
         display="flex"
         justifyContent="center"
