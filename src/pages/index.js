@@ -44,7 +44,7 @@ const MENU_LOGIN_STATE = [
   },
   {
     label: "마이페이지",
-    route: "/maypage",
+    route: "/mypage",
   },
 ];
 
