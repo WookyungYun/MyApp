@@ -37,7 +37,7 @@ export default function RegisterPage() {
       padding="36px"
       boxShadow="0px 3px 10px rgba(0, 0, 0, 0.25)"
       autoComplete="off">
-      <Box sx={{ display: "flex", justifyContent: "center", mt: 20, mb: 70 }}>
+      <Box sx={{ display: "flex", justifyContent: "center", mt: 5, mb: 20 }}>
         <Typography variant="h4" fontWeight="900">
           Welcome!
         </Typography>

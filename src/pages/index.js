@@ -10,6 +10,7 @@ import { LoadingButton } from "@mui/lab";
 import AppInfo from "../components/Card/AppInfo";
 import AppReview from "../components/Card/AppReview";
 import SimilarApp from "../components/Card/SimilarApp";
+import Layout from "../components/layout/Layout";
 
 export default function Home() {
   const [isLogIn, setIsLogIn] = useRecoilState(logInState);
@@ -50,54 +51,56 @@ export default function Home() {
 
   return (
     <>
-      {menuData.map(({ label, route }) => (
-        <Link key={label} href={route}>
-          {label === "로그아웃" ? (
-            <Typography onClick={onClickLogout}>{label}</Typography>
-          ) : (
-            <Typography>{label}</Typography>
-          )}
-        </Link>
-      ))}
-      <Box maxWidth="630px" margin="auto" marginTop="70px">
-        <Select defaultValue="korea" sx={{ width: 90 }}>
-          <MenuItem value="korea">Korea</MenuItem>
-          <MenuItem value="us">US</MenuItem>
-        </Select>
-        <TextField
-          sx={{ width: 500, ml: 3 }}
-          placeholder="분석하고 싶은 앱의 이름을 입력해주세요"></TextField>
-        <Box margin="auto" marginTop="70px" marginLeft="85px">
-          <LoadingButton
-            type="submit"
-            variant="contained"
-            sx={{ width: 200, height: 60, marginRight: 10 }}>
-            <Typography fontSize="20px" color="common.white" onClick={getId}>
-              앱ID가져오기
-            </Typography>
-          </LoadingButton>
-          <LoadingButton
-            type="submit"
-            variant="contained"
-            sx={{ width: 200, height: 60 }}>
-            <Typography
-              fontSize="20px"
-              color="common.white"
-              onClick={analyzeApp}>
-              분석하기
-            </Typography>
-          </LoadingButton>
-        </Box>
-      </Box>
-      {analyzeResult.length !== 0 && isLogIn && (
-        <>
-          <Box maxWidth="800px" margin="auto" marginTop="60px">
-            <AppInfo />
-            <AppReview />
-            <SimilarApp />
+      <Layout>
+        {menuData.map(({ label, route }) => (
+          <Link key={label} href={route}>
+            {label === "로그아웃" ? (
+              <Typography onClick={onClickLogout}>{label}</Typography>
+            ) : (
+              <Typography>{label}</Typography>
+            )}
+          </Link>
+        ))}
+        <Box maxWidth="630px" margin="auto" marginTop="70px">
+          <Select defaultValue="korea" sx={{ width: 90 }}>
+            <MenuItem value="korea">Korea</MenuItem>
+            <MenuItem value="us">US</MenuItem>
+          </Select>
+          <TextField
+            sx={{ width: 500, ml: 3 }}
+            placeholder="분석하고 싶은 앱의 이름을 입력해주세요"></TextField>
+          <Box margin="auto" marginTop="70px" marginLeft="85px">
+            <LoadingButton
+              type="submit"
+              variant="contained"
+              sx={{ width: 200, height: 60, marginRight: 10 }}>
+              <Typography fontSize="20px" color="common.white" onClick={getId}>
+                앱ID가져오기
+              </Typography>
+            </LoadingButton>
+            <LoadingButton
+              type="submit"
+              variant="contained"
+              sx={{ width: 200, height: 60 }}>
+              <Typography
+                fontSize="20px"
+                color="common.white"
+                onClick={analyzeApp}>
+                분석하기
+              </Typography>
+            </LoadingButton>
           </Box>
-        </>
-      )}
+        </Box>
+        {analyzeResult.length !== 0 && isLogIn && (
+          <>
+            <Box maxWidth="800px" margin="auto" marginTop="60px">
+              <AppInfo />
+              <AppReview />
+              <SimilarApp />
+            </Box>
+          </>
+        )}
+      </Layout>
     </>
   );
 }
