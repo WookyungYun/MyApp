@@ -9,6 +9,7 @@ import {
 import ThemeComponent from "../styles/theme/ThemeComponent";
 import { CacheProvider } from "@emotion/react";
 import { createEmotionCache } from "src/utils/create-emotion-cache";
+import { RecoilRoot } from "recoil";
 
 Router.events.on("routeChangeStart", () => {
   //경로가 변경되기 시작할때 발생
@@ -35,17 +36,19 @@ export default function App({
   const getLayout = Component.getLayout ?? ((page) => <Layout>{page}</Layout>);
   return (
     <CacheProvider value={emotionCache}>
-      <SettingsProvider>
-        <SettingsConsumer>
-          {({ settings }) => {
-            return (
-              <ThemeComponent settings={settings}>
-                {getLayout(<Component {...pageProps} />)}
-              </ThemeComponent>
-            );
-          }}
-        </SettingsConsumer>
-      </SettingsProvider>
+      <RecoilRoot>
+        <SettingsProvider>
+          <SettingsConsumer>
+            {({ settings }) => {
+              return (
+                <ThemeComponent settings={settings}>
+                  {getLayout(<Component {...pageProps} />)}
+                </ThemeComponent>
+              );
+            }}
+          </SettingsConsumer>
+        </SettingsProvider>
+      </RecoilRoot>
     </CacheProvider>
   );
 }
