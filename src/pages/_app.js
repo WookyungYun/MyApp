@@ -1,4 +1,3 @@
-import Layout from "src/components/layout/Layout";
 import { Router } from "next/router";
 import NProgress from "nprogress";
 import "../styles/nprogress.css";
@@ -33,7 +32,6 @@ export default function App({
   emotionCache = clientSideEmotionCache,
   pageProps,
 }) {
-  const getLayout = Component.getLayout ?? ((page) => <Layout>{page}</Layout>);
   return (
     <CacheProvider value={emotionCache}>
       <RecoilRoot>
@@ -42,7 +40,7 @@ export default function App({
             {({ settings }) => {
               return (
                 <ThemeComponent settings={settings}>
-                  {getLayout(<Component {...pageProps} />)}
+                  <Component {...pageProps} />
                 </ThemeComponent>
               );
             }}

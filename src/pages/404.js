@@ -7,12 +7,14 @@ export default function Custom404() {
     <>
       <Box
         height="100vh"
-        display="flex"
-        flexDirection="column"
         position="relative"
-        alignItems="center"
-        justifyContent="center"
-        fontSize="50px">
+        fontSize="50px"
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+        }}>
         Page Not Found
         <Box display="flex" mt="50px">
           <Link href="/">
