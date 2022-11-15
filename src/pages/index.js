@@ -4,7 +4,7 @@ import { logInState } from "../state/LogIn";
 import { analyze } from "../state/Analyze";
 import { httpApi } from "src/api/http";
 import { useMemo, useEffect } from "react";
-import { MenuItem, Select, TextField, Typography } from "@mui/material";
+import { Button, MenuItem, Select, TextField, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { LoadingButton } from "@mui/lab";
 import AppInfo from "../components/Card/AppInfo";
@@ -61,34 +61,43 @@ export default function Home() {
             )}
           </Link>
         ))}
-        <Box maxWidth="630px" margin="auto" marginTop="70px">
-          <Select defaultValue="korea" sx={{ width: 90 }}>
-            <MenuItem value="korea">Korea</MenuItem>
-            <MenuItem value="us">US</MenuItem>
-          </Select>
-          <TextField
-            sx={{ width: 500, ml: 3 }}
-            placeholder="분석하고 싶은 앱의 이름을 입력해주세요"></TextField>
-          <Box margin="auto" marginTop="70px" marginLeft="85px">
-            <LoadingButton
+        <Box sx={{ width: "630px", m: "0 auto" }}>
+          <Box display="flex" marginTop="50px">
+            <Select defaultValue="apple" sx={{ width: 95, mr: 3 }}>
+              <MenuItem value="apple">Apple</MenuItem>
+              <MenuItem value="google">Google</MenuItem>
+            </Select>
+            <Select defaultValue="korea" sx={{ width: 90 }}>
+              <MenuItem value="korea">Korea</MenuItem>
+              <MenuItem value="us">US</MenuItem>
+            </Select>
+            <TextField
+              fullWidth
+              sx={{ ml: 3 }}
+              placeholder="분석하고 싶은 앱의 이름을 입력해주세요"></TextField>
+          </Box>
+        </Box>
+        <Box width="630px" margin="0 auto">
+          <Box display="flex" justifyContent="center" marginTop="50px">
+            <Button
               type="submit"
               variant="contained"
-              sx={{ width: 200, height: 60, marginRight: 10 }}>
+              sx={{ width: 170, height: 60, marginRight: 10 }}>
               <Typography fontSize="20px" color="common.white" onClick={getId}>
                 앱ID가져오기
               </Typography>
-            </LoadingButton>
-            <LoadingButton
+            </Button>
+            <Button
               type="submit"
               variant="contained"
-              sx={{ width: 200, height: 60 }}>
+              sx={{ width: 170, height: 60 }}>
               <Typography
                 fontSize="20px"
                 color="common.white"
                 onClick={analyzeApp}>
                 분석하기
               </Typography>
-            </LoadingButton>
+            </Button>
           </Box>
         </Box>
         {analyzeResult.length !== 0 && isLogIn && (
