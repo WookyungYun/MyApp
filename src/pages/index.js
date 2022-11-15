@@ -6,7 +6,6 @@ import { httpApi } from "src/api/http";
 import { useMemo, useEffect } from "react";
 import { Button, MenuItem, Select, TextField, Typography } from "@mui/material";
 import { Box } from "@mui/system";
-import { LoadingButton } from "@mui/lab";
 import AppInfo from "../components/Card/AppInfo";
 import AppReview from "../components/Card/AppReview";
 import SimilarApp from "../components/Card/SimilarApp";
@@ -33,9 +32,10 @@ export default function Home() {
 
   const getId = async () => {
     const result = await httpApi.get("/job/appsearch");
-    const list = await result.json();
     console.log(result);
-    console.log(list);
+    // const list = await result.json();
+    console.log(result);
+    // console.log(list);
     //가져온거 성공하면 alert 띄우기
   };
 

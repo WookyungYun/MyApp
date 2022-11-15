@@ -5,7 +5,7 @@ import { analyze } from "../../state/Analyze";
 
 export default function AppInfo() {
   const analyzeResult = useRecoilValue(analyze);
-  console.log("appinfo", analyzeResult.title);
+  console.log("appinfo", analyzeResult);
   return (
     <Card sx={{ mb: 5 }}>
       <CardContent>

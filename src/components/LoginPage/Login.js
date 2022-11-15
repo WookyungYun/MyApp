@@ -40,7 +40,9 @@ export default function LoginPage() {
     }
     console.log(result);
     console.log(result.data.data.result.access_token);
-    localStorage.setItem("token", result.data.access_token);
+
+    localStorage.setItem("token", result.data.data.result.access_token);
+
   };
 
   const onSubmit = async () => {
