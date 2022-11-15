@@ -8,7 +8,7 @@ export default function MyPage() {
       router.push("/login");
     }
   }, []);
-
+  //loadevent , 페이지 수정, 로그인 토큰없을때 처리 다시하기
   return (
     <>
       <div>MyPage</div>

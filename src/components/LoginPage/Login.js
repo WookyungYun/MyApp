@@ -38,8 +38,9 @@ export default function LoginPage() {
     if (result.status === 201) {
       router.push("/");
     }
-    console.log(result.data.access_token);
-    localStorage.setItem("token", result.data.access_token);
+    console.log(result);
+    console.log(result.data.data.result.access_token);
+    localStorage.setItem("token", result.data.data.result.access_token);
   };
 
   const onSubmit = async () => {
