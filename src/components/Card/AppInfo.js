@@ -1,30 +1,72 @@
-import { Box, Card, CardContent } from "@mui/material";
+import { Box, Card, CardContent, Chip, Grid, Typography } from "@mui/material";
+import Image from "next/image";
 import React from "react";
 import { useRecoilValue } from "recoil";
 import { analyze } from "../../state/Analyze";
 
 export default function AppInfo() {
   const analyzeResult = useRecoilValue(analyze);
-  console.log("appinfo", analyzeResult);
+  console.log(analyzeResult);
   return (
-    <Card sx={{ mb: 5 }}>
-      <CardContent>
-        AppInfo
-        <Box
-          sx={{ display: "flex", justifyContent: "space-between", mt: "10px" }}>
-          <Box border="1px solid red">
-            {/* {analyzeResult.title} */}
-            이름: 중고나라 - 국내 최대 중고마켓 <br /> 카테고리: 쇼핑, 장르
-            (태그)
-            {/* {analyzeResult.price} */}
-            <br /> 가격: 무료(태그)
-          </Box>
-          <Box border="1px solid blue"></Box>
-          <Box border="1px solid red" width="100px" height="100px">
-            이미지(박스섀도우 줄 예정/ 위치 못정함)
-          </Box>
-        </Box>
-      </CardContent>
-    </Card>
+    <>
+      {analyzeResult && (
+        <Card sx={{ mb: 5 }}>
+          <CardContent>
+            {/* AppInfo */}
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                mt: 5,
+                mr: 5,
+                mb: 5,
+              }}>
+              <Box sx={{ pt: 1.5, mt: 1 }}>
+                <Grid container rowSpacing={6} columnSpacing={1}>
+                  <Grid item xs={8}>
+                    <Typography fontWeight="900">
+                      이름: {analyzeResult.result.title}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={8}>
+                    <Typography fontWeight="900">
+                      카테고리:{" "}
+                      {analyzeResult.result.genres.map((item) => (
+                        <Chip
+                          label={item}
+                          key={item}
+                          sx={{ mr: 2 }}
+                          variant="outlined"
+                          color="primary"></Chip>
+                      ))}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Typography fontWeight="900">
+                      가격:{" "}
+                      {analyzeResult.result.price > 0 ? (
+                        analyzeResult.result.price + "원"
+                      ) : (
+                        <Chip
+                          label="무료"
+                          variant="outlined"
+                          color="primary"></Chip>
+                      )}
+                    </Typography>
+                  </Grid>
+                </Grid>
+              </Box>
+
+              <Image
+                src={analyzeResult.result.icon}
+                alt="image"
+                width={150}
+                height={150}
+              />
+            </Box>
+          </CardContent>
+        </Card>
+      )}
+    </>
   );
 }

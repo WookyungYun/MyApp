@@ -39,10 +39,9 @@ export default function LoginPage() {
       router.push("/");
     }
     console.log(result);
-    console.log(result.data.data.result.access_token);
+    console.log(result.data.result.access_token);
 
-    localStorage.setItem("token", result.data.data.result.access_token);
-
+    localStorage.setItem("token", result.data.result.access_token);
   };
 
   const onSubmit = async () => {
