@@ -1,9 +1,9 @@
 import axios from "axios";
 import { ApiError } from "src/api/ApiError";
 
-// console.log(process.env.API_SERVER_URL)
+console.log(process.env.API_SERVER_URL);
 export const httpApi = axios.create({
-  baseURL: "http://15.164.230.202:3011",
+  baseURL: process.env.API_SERVER_URL,
 });
 
 httpApi.interceptors.request.use((config) => {
