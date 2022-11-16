@@ -13,8 +13,6 @@ export default function LoginPage() {
 
   const [logIn, setIsLogIn] = useRecoilState(logInState);
 
-  console.log(router);
-
   const {
     register,
     watch,

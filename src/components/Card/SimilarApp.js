@@ -1,36 +1,27 @@
-import { Box, Card, CardContent } from "@mui/material";
+import { Box, Card, CardContent, Typography } from "@mui/material";
 import React from "react";
+import { useRecoilValue } from "recoil";
+import { similarInfo } from "../../state/Analyze";
+import Image from "next/image";
 
 export default function SimilarApp() {
+  const info = useRecoilValue(similarInfo);
+
   return (
-    <Card>
-      <CardContent sx={{ display: "flex" }}>Similar App</CardContent>
-      <CardContent sx={{ display: "flex" }}>
-        <Box sx={{ flexGrow: 1 }} border="1px solid black">
-          {/* {analyzeResult.title} */}
-          Similar App <br />
-          이름: 중고나라 - 국내 최대 중고마켓 <br /> 카테고리: 쇼핑, 장르 (태그)
-          <br /> 가격: 무료(태그)
-        </Box>
-        <Box sx={{ flexGrow: 1 }} border="1px solid black">
-          {/* {analyzeResult.title} */}
-          Similar App <br />
-          이름: 중고나라 - 국내 최대 중고마켓 <br /> 카테고리: 쇼핑, 장르 (태그)
-          <br /> 가격: 무료(태그)
-        </Box>
-        <Box sx={{ flexGrow: 1 }} border="1px solid black">
-          {/* {analyzeResult.title} */}
-          Similar App <br />
-          이름: 중고나라 - 국내 최대 중고마켓 <br /> 카테고리: 쇼핑, 장르 (태그)
-          <br /> 가격: 무료(태그)
-        </Box>
-        <Box sx={{ flexGrow: 1 }} border="1px solid black">
-          {/* {analyzeResult.title} */}
-          Similar App <br />
-          이름: 중고나라 - 국내 최대 중고마켓 <br /> 카테고리: 쇼핑, 장르 (태그)
-          <br /> 가격: 무료(태그)
-        </Box>
-      </CardContent>
-    </Card>
+    <>
+      {info.length !== 0 && (
+        <Card>
+          <CardContent sx={{ display: "flex" }}>Similar App</CardContent>
+          <Box display="flex" width="300px">
+            {info.map((item) => (
+              <Box key={item.id} margin="20px 15px">
+                <Image src={item.icon} alt="image" width={100} height={100} />
+                <Typography fontWeight="900"> {item.title}</Typography>
+              </Box>
+            ))}
+          </Box>
+        </Card>
+      )}
+    </>
   );
 }

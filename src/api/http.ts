@@ -14,6 +14,7 @@ httpApi.interceptors.request.use((config) => {
 });
 
 httpApi.interceptors.response.use(undefined, (error: any) => {
+  //200이 아닌 401에러가 오면 기존토큰 지우고 로그인페이지로 보내기
   throw new ApiError<ApiErrorData>(
     error.response?.data.message || error.message,
     error.response?.data

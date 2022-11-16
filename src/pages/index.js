@@ -1,10 +1,16 @@
 import Link from "next/link";
 import { useRecoilState } from "recoil";
 import { logInState } from "../state/LogIn";
-import { analyze, loading } from "../state/Analyze";
+import {
+  analyze,
+  appId,
+  loading,
+  selectCountry,
+  similarInfo,
+} from "../state/Analyze";
 import { httpApi } from "src/api/http";
 import { useMemo, useEffect, useState } from "react";
-import { Button, MenuItem, Select, TextField, Typography } from "@mui/material";
+import { Card, MenuItem, Select, TextField, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import AppInfo from "../components/Card/AppInfo";
 import AppReview from "../components/Card/AppReview";
@@ -14,8 +20,10 @@ import { LoadingButton } from "@mui/lab";
 
 export default function Home() {
   const [appName, setAppName] = useState("");
-  const [country, setCountry] = useState("");
   const [isLogIn, setIsLogIn] = useRecoilState(logInState);
+  const [info, setInfo] = useRecoilState(similarInfo);
+  const [Id, setId] = useRecoilState(appId);
+  const [country, setCountry] = useRecoilState(selectCountry);
   const [analyzeResult, setAnalyzeResult] = useRecoilState(analyze); //appInfo에 들어갈내용
   const [isLoading, setIsLoading] = useRecoilState(loading);
 
@@ -38,29 +46,40 @@ export default function Home() {
   const handleValue = (e) => {
     setAppName(e.target.value);
   };
-
-  //분석하기
+  //Id받아오기+분석하기
   const analyzeApp = async () => {
+    //id 받아오기
     const response = await httpApi.get("/job/appsearch", {
       params: {
         name: `${appName}`,
       },
     });
+    // console.log(appName);
     const responseId = response.data.result;
-    console.log("id 가져오기", responseId);
-
     setIsLoading(true);
+
+    //기존앱 받아오기
     const res = await httpApi.post("/job/appinfo", {
       country: `${country}`,
       appId: responseId,
     });
     const result = res.data.result;
-    console.log(res);
-    console.log("타이틀", result.title);
-    console.log("이미지", result.icon);
+    // console.log("------기존앱----", result);
+    // console.log("------기존앱 id----", result.id);
+    setId(result.id);
+    // console.log("저장된id", Id);
     setIsLoading(false);
     setAnalyzeResult({ result });
-    console.log("결과", analyzeResult);
+
+    //유사앱 받아오기
+    const getSimilar = await httpApi.post("/job/similarappinfo", {
+      country: `${country}`,
+      appId: "Id",
+    });
+    console.log("------유사앱----", getSimilar);
+    console.log("배열", getSimilar.data.result);
+    setInfo(getSimilar.data.result);
+    console.log("info", info);
   };
 
   return (
@@ -83,7 +102,6 @@ export default function Home() {
             </Select>
             <Select
               value={country}
-              defaultValue="kr"
               onChange={(e) => setCountry(e.target.value)}
               sx={{ width: 90 }}>
               <MenuItem value="kr">Korea</MenuItem>
@@ -99,7 +117,7 @@ export default function Home() {
               loading={isLoading}
               type="submit"
               variant="contained"
-              sx={{ width: 200, height: 60, ml: 3 }}>
+              sx={{ width: 200, height: 55, ml: 3 }}>
               <Typography
                 fontSize="20px"
                 color="common.white"
@@ -109,8 +127,35 @@ export default function Home() {
             </LoadingButton>
           </Box>
         </Box>
-        <Box width="630px" margin="0 auto">
-          <Box display="flex" justifyContent="center" marginTop="50px"></Box>
+        <Box width="630px" m="0 auto">
+          <Box display="flex" justifyContent="center" mt="50px"></Box>
+        </Box>
+        <Box maxWidth="800px" margin="auto" mt="60px">
+          <Box display="flex" height="250px" mt="100px">
+            <Box
+              flexGrow="1"
+              width="210px"
+              mr="20px"
+              borderRadius="20px"
+              bgcolor="white">
+              유튜브 <br />
+              관련 동영상 App 분석보기
+            </Box>
+            <Box
+              flexGrow="1"
+              width="210px"
+              mr="20px"
+              borderRadius="20px"
+              bgcolor="white">
+              카카오톡
+              <br />
+              관련 동영상 App 분석보기
+            </Box>
+            <Box flexGrow="1" width="210px" borderRadius="20px" bgcolor="white">
+              인스타그램 <br />
+              관련 동영상 App 분석보기
+            </Box>
+          </Box>
         </Box>
         {analyzeResult.length !== 0 && isLogIn && (
           <>
