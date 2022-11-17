@@ -74,11 +74,12 @@ export default function Home() {
     //유사앱 받아오기
     const getSimilar = await httpApi.post("/job/similarappinfo", {
       country: `${country}`,
-      appId: "Id",
+      appId: Id,
     });
     console.log("------유사앱----", getSimilar);
     console.log("배열", getSimilar.data.result);
     setInfo(getSimilar.data.result);
+    console.log("info", info);
     console.log("info", info);
   };
 
