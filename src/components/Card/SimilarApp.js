@@ -19,11 +19,7 @@ export default function SimilarApp() {
             <CardContent>
               <Carousel swiping slidesToShow="7" withoutControls>
                 {info.map((item) => (
-                  <Box
-                    key={item.id}
-                    height="250px"
-                    // border="1px solid red"
-                    position="relative">
+                  <Box key={item.id} height="250px" position="relative">
                     <Image
                       src={item.icon}
                       alt="image"

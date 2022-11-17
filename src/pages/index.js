@@ -4,6 +4,7 @@ import { logInState } from "../state/LogIn";
 import {
   analyze,
   appId,
+  appReview,
   loading,
   selectCountry,
   similarInfo,
@@ -25,6 +26,7 @@ export default function Home() {
   const [Id, setId] = useRecoilState(appId);
   const [country, setCountry] = useRecoilState(selectCountry);
   const [analyzeResult, setAnalyzeResult] = useRecoilState(analyze); //appInfo에 들어갈내용
+  const [review, setReview] = useRecoilState(appReview);
   const [isLoading, setIsLoading] = useRecoilState(loading);
 
   const menuData = useMemo(() => {
@@ -47,21 +49,20 @@ export default function Home() {
     setAppName(e.target.value);
   };
   //Id받아오기+분석하기
+  //id 받아오기
   const analyzeApp = async () => {
-    //id 받아오기
-    const response = await httpApi.get("/job/appsearch", {
-      params: {
-        name: `${appName}`,
-      },
-    });
-    // console.log(appName);
-    const responseId = response.data.result;
+    // const response = await httpApi.get("/job/appsearch", {
+    //   params: {
+    //     name: `${appName}`,
+    //   },
+    // });
+    // const responseId = response.data.result;
     setIsLoading(true);
 
     //기존앱 받아오기
     const res = await httpApi.post("/job/appinfo", {
       country: `${country}`,
-      appId: responseId,
+      appId: "896515652",
     });
     const result = res.data.result;
     // console.log("------기존앱----", result);
@@ -71,15 +72,21 @@ export default function Home() {
     setIsLoading(false);
     setAnalyzeResult({ result });
 
+    //App Review 받아오기
+    const getReview = await httpApi.post("/job/appreview", {
+      country: `${country}`,
+      appId: "896515652",
+    });
+    console.log("앱리뷰", getReview.data.result);
+    setReview(getReview.data.result);
     //유사앱 받아오기
     const getSimilar = await httpApi.post("/job/similarappinfo", {
       country: `${country}`,
-      appId: Id,
+      appId: "896515652",
     });
     console.log("------유사앱----", getSimilar);
     console.log("배열", getSimilar.data.result);
     setInfo(getSimilar.data.result);
-    console.log("info", info);
     console.log("info", info);
   };
 
@@ -131,33 +138,40 @@ export default function Home() {
         <Box width="630px" m="0 auto">
           <Box display="flex" justifyContent="center" mt="50px"></Box>
         </Box>
-        <Box maxWidth="800px" margin="auto" mt="60px">
-          <Box display="flex" height="250px" mt="100px">
-            <Box
-              flexGrow="1"
-              width="210px"
-              mr="20px"
-              borderRadius="20px"
-              bgcolor="white">
-              유튜브 <br />
-              관련 동영상 App 분석보기
-            </Box>
-            <Box
-              flexGrow="1"
-              width="210px"
-              mr="20px"
-              borderRadius="20px"
-              bgcolor="white">
-              카카오톡
-              <br />
-              관련 동영상 App 분석보기
-            </Box>
-            <Box flexGrow="1" width="210px" borderRadius="20px" bgcolor="white">
-              인스타그램 <br />
-              관련 동영상 App 분석보기
+        {analyzeResult.length == 0 && (
+          <Box maxWidth="800px" margin="auto" mt="60px">
+            <Box display="flex" height="250px" mt="100px">
+              <Box
+                flexGrow="1"
+                width="210px"
+                mr="20px"
+                borderRadius="20px"
+                bgcolor="white">
+                유튜브 <br />
+                관련 동영상 App 분석보기
+              </Box>
+              <Box
+                flexGrow="1"
+                width="210px"
+                mr="20px"
+                borderRadius="20px"
+                bgcolor="white">
+                카카오톡
+                <br />
+                관련 동영상 App 분석보기
+              </Box>
+              <Box
+                flexGrow="1"
+                width="210px"
+                borderRadius="20px"
+                bgcolor="white">
+                인스타그램 <br />
+                관련 동영상 App 분석보기
+              </Box>
             </Box>
           </Box>
-        </Box>
+        )}
+
         {analyzeResult.length !== 0 && isLogIn && (
           <>
             <Box maxWidth="800px" margin="auto" marginTop="60px">

@@ -24,3 +24,8 @@ export const similarInfo = atom({
   key: "similarInfo",
   default: [],
 });
+
+export const appReview = atom({
+  key: "review",
+  default: [],
+});

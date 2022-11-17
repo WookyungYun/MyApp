@@ -87,7 +87,7 @@ export default function LoginPage() {
           error={Boolean(errors.password)}
           helperText={errors.password?.message}></TextField>
 
-        <div>
+        <Box>
           <LoadingButton
             fullWidth
             loading={logIn}
@@ -97,7 +97,7 @@ export default function LoginPage() {
             onClick={handleClickLogin}>
             Sign In
           </LoadingButton>
-        </div>
+        </Box>
         <Box display="flex">
           <Typography>App Review가 처음이신가요?</Typography>
           <Link href="/register">
