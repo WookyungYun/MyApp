@@ -57,7 +57,7 @@ export default function Home() {
     //   },
     // });
     // const responseId = response.data.result;
-    setIsLoading(true);
+    // setIsLoading(true);
 
     //기존앱 받아오기
     const res = await httpApi.post("/job/appinfo", {
