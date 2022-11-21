@@ -1,33 +1,29 @@
-import Link from "next/link";
-import { useRecoilState } from "recoil";
-import { logInState } from "../state/LogIn";
+import Link from 'next/link';
+import { useRecoilState } from 'recoil';
+import { logInState } from '../state/LogIn';
 import {
-  analyze,
-  appId,
-  appReview,
-  loading,
-  selectCountry,
-  similarInfo,
-} from "../state/Analyze";
-import { httpApi } from "src/api/http";
-import { useMemo, useEffect, useState } from "react";
-import { Card, MenuItem, Select, TextField, Typography } from "@mui/material";
-import { Box } from "@mui/system";
-import AppInfo from "../components/Card/AppInfo";
-import AppReview from "../components/Card/AppReview";
-import SimilarApp from "../components/Card/SimilarApp";
-import Layout from "../components/layout/Layout";
-import { LoadingButton } from "@mui/lab";
+  analyzeState,
+  appIdState,
+  loadingState,
+  selectCountryState,
+} from '../state/Analyze';
+import { httpApi } from 'src/api/http';
+import { useMemo, useEffect, useState } from 'react';
+import { MenuItem, Select, TextField, Typography } from '@mui/material';
+import { Box } from '@mui/system';
+import AppInfo from '../components/Card/AppInfo';
+import AppReview from '../components/Card/AppReview';
+import SimilarApp from '../components/Card/SimilarApp';
+import Layout from '../components/layout/Layout';
+import { LoadingButton } from '@mui/lab';
 
 export default function Home() {
-  const [appName, setAppName] = useState("");
+  const [appName, setAppName] = useState('');
   const [isLogIn, setIsLogIn] = useRecoilState(logInState);
-  const [info, setInfo] = useRecoilState(similarInfo);
-  const [Id, setId] = useRecoilState(appId);
-  const [country, setCountry] = useRecoilState(selectCountry);
-  const [analyzeResult, setAnalyzeResult] = useRecoilState(analyze); //appInfo에 들어갈내용
-  const [review, setReview] = useRecoilState(appReview);
-  const [isLoading, setIsLoading] = useRecoilState(loading);
+  const [country, setCountry] = useRecoilState(selectCountryState);
+  const [analyzeResult, setAnalyzeResult] = useRecoilState(analyzeState); //appInfo에 들어갈내용
+  const [isLoading, setIsLoading] = useRecoilState(loadingState);
+  const [appId, setAppId] = useRecoilState(appIdState);
 
   const menuData = useMemo(() => {
     if (isLogIn === null) return [];
@@ -36,58 +32,46 @@ export default function Home() {
   }, [isLogIn]);
 
   useEffect(() => {
-    if (localStorage.getItem("token")) setIsLogIn(true);
+    if (localStorage.getItem('token')) setIsLogIn(true);
   }, [setIsLogIn]);
 
   //로그아웃
   const onClickLogout = () => {
-    localStorage.removeItem("token");
+    localStorage.removeItem('token');
     setIsLogIn(false);
   };
 
   const handleValue = (e) => {
     setAppName(e.target.value);
   };
+
   //Id받아오기+분석하기
-  //id 받아오기
   const analyzeApp = async () => {
-    // const response = await httpApi.get("/job/appsearch", {
-    //   params: {
-    //     name: `${appName}`,
-    //   },
-    // });
-    // const responseId = response.data.result;
-    // setIsLoading(true);
+    try {
+      const response = await httpApi.get('/job/appsearch', {
+        params: {
+          name: `${appName}`,
+        },
+      });
+      const responseId = response.data.result;
+      setIsLoading(true);
 
-    //기존앱 받아오기
-    const res = await httpApi.post("/job/appinfo", {
-      country: `${country}`,
-      appId: "896515652",
-    });
-    const result = res.data.result;
-    // console.log("------기존앱----", result);
-    // console.log("------기존앱 id----", result.id);
-    setId(result.id);
-    // console.log("저장된id", Id);
-    setIsLoading(false);
-    setAnalyzeResult({ result });
+      console.log(country, '국가');
 
-    //App Review 받아오기
-    const getReview = await httpApi.post("/job/appreview", {
-      country: `${country}`,
-      appId: "896515652",
-    });
-    console.log("앱리뷰", getReview.data.result);
-    setReview(getReview.data.result);
-    //유사앱 받아오기
-    const getSimilar = await httpApi.post("/job/similarappinfo", {
-      country: `${country}`,
-      appId: "896515652",
-    });
-    console.log("------유사앱----", getSimilar);
-    console.log("배열", getSimilar.data.result);
-    setInfo(getSimilar.data.result);
-    console.log("info", info);
+      //기존앱 받아오기
+      const res = await httpApi.post('/job/appinfo', {
+        country,
+        appId: responseId,
+      });
+      const result = res.data.result;
+      const Id = result.id;
+      setAppId(Id);
+      setIsLoading(false);
+      setAnalyzeResult({ result });
+      console.log('앱아이디', appId);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -95,14 +79,14 @@ export default function Home() {
       <Layout>
         {menuData.map(({ label, route }) => (
           <Link key={label} href={route}>
-            {label === "로그아웃" ? (
+            {label === '로그아웃' ? (
               <Typography onClick={onClickLogout}>{label}</Typography>
             ) : (
               <Typography>{label}</Typography>
             )}
           </Link>
         ))}
-        <Box sx={{ width: "800px", m: "0 auto" }}>
+        <Box sx={{ width: '800px', m: '0 auto' }}>
           <Box display="flex" marginTop="50px">
             <Select defaultValue="apple" sx={{ width: 95, mr: 3 }}>
               <MenuItem value="apple">Apple</MenuItem>
@@ -111,7 +95,8 @@ export default function Home() {
             <Select
               value={country}
               onChange={(e) => setCountry(e.target.value)}
-              sx={{ width: 90 }}>
+              sx={{ width: 90 }}
+            >
               <MenuItem value="kr">Korea</MenuItem>
               <MenuItem value="us">US</MenuItem>
             </Select>
@@ -120,16 +105,19 @@ export default function Home() {
               fullWidth
               sx={{ ml: 3 }}
               onChange={handleValue}
-              placeholder="분석하고 싶은 앱의 이름을 입력해주세요"></TextField>
+              placeholder="분석하고 싶은 앱의 이름을 입력해주세요"
+            ></TextField>
             <LoadingButton
               loading={isLoading}
               type="submit"
               variant="contained"
-              sx={{ width: 200, height: 55, ml: 3 }}>
+              sx={{ width: 200, height: 55, ml: 3 }}
+            >
               <Typography
                 fontSize="20px"
                 color="common.white"
-                onClick={() => analyzeApp()}>
+                onClick={() => analyzeApp()}
+              >
                 분석하기
               </Typography>
             </LoadingButton>
@@ -146,7 +134,8 @@ export default function Home() {
                 width="210px"
                 mr="20px"
                 borderRadius="20px"
-                bgcolor="white">
+                bgcolor="white"
+              >
                 유튜브 <br />
                 관련 동영상 App 분석보기
               </Box>
@@ -155,7 +144,8 @@ export default function Home() {
                 width="210px"
                 mr="20px"
                 borderRadius="20px"
-                bgcolor="white">
+                bgcolor="white"
+              >
                 카카오톡
                 <br />
                 관련 동영상 App 분석보기
@@ -164,7 +154,8 @@ export default function Home() {
                 flexGrow="1"
                 width="210px"
                 borderRadius="20px"
-                bgcolor="white">
+                bgcolor="white"
+              >
                 인스타그램 <br />
                 관련 동영상 App 분석보기
               </Box>
@@ -188,22 +179,22 @@ export default function Home() {
 
 const MENU_LOGIN_STATE = [
   {
-    label: "로그아웃",
-    route: "/",
+    label: '로그아웃',
+    route: '/',
   },
   {
-    label: "마이페이지",
-    route: "/mypage",
+    label: '마이페이지',
+    route: '/mypage',
   },
 ];
 
 const MENU = [
   {
-    label: "로그인",
-    route: "/login",
+    label: '로그인',
+    route: '/login',
   },
   {
-    label: "회원가입",
-    route: "/register",
+    label: '회원가입',
+    route: '/register',
   },
 ];
