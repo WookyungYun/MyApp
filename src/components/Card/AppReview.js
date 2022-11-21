@@ -4,15 +4,24 @@ import { useRecoilValue } from 'recoil';
 import { appIdState, selectCountryState } from '../../state/Analyze';
 import { httpApi } from 'src/api/http';
 import Word from './Word';
-import { Button, Card, Typography } from '@mui/material';
+import {
+  Button,
+  Card,
+  FormControl,
+  MenuItem,
+  Select,
+  Typography,
+} from '@mui/material';
 
 export default function AppReview() {
   const country = useRecoilValue(selectCountryState);
   const appId = useRecoilValue(appIdState);
   const [data, setData] = useState([]);
-  const [page, setPage] = useState(700);
+  const [page, setPage] = useState(0);
+  const [order, setOrder] = useState('최신순');
 
   useEffect(() => {
+    setPage(0);
     const getReview = async () => {
       try {
         const res = await httpApi.post('/job/appreview', {
@@ -32,16 +41,33 @@ export default function AppReview() {
     setPage((prev) => prev + 500);
   };
 
+  const handleClick = () => {
+    setPage(0);
+  };
+
+  const handleChange = (e) => {
+    setOrder(e.target.value);
+  };
+
   return (
     <>
-      <Typography>리뷰</Typography>
       <Card sx={{ mb: 5 }}>
         <Box>
           워드클라우드 영역
           {/* <Word /> */}
         </Box>
+        <Box>필터 영역</Box>
+
         <Box>
           <Box width="100%" maxHeight={page} p="10px" overflow="hidden">
+            <Box display="flex" justifyContent="flex-end">
+              <FormControl sx={{ m: 2, minWidth: 120 }} size="small">
+                <Select value={order} onChange={handleChange}>
+                  <MenuItem value="평점순">평점순</MenuItem>
+                  <MenuItem value="최신순">최신순</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
             {data.map((item) =>
               item.map((item) => (
                 <Card key={item.id} sx={{ mb: 2 }}>
@@ -62,13 +88,24 @@ export default function AppReview() {
               ))
             )}
           </Box>
-          {data[0].length >= 8 && (
-            <Box display="flex" justifyContent="center">
-              <Button variant="contained" onClick={handlePage} sx={{ m: 2 }}>
-                더보기
-              </Button>
-            </Box>
-          )}
+          <Box display="flex" justifyContent="center">
+            {page === 0 ? (
+              <Box>
+                <Button variant="contained" onClick={handlePage} sx={{ m: 2 }}>
+                  리뷰 펼치기
+                </Button>
+              </Box>
+            ) : (
+              <>
+                <Button variant="outlined" onClick={handlePage} sx={{ m: 2 }}>
+                  더보기
+                </Button>
+                <Button variant="outlined" onClick={handleClick} sx={{ m: 2 }}>
+                  리뷰 접기
+                </Button>{' '}
+              </>
+            )}
+          </Box>
         </Box>
       </Card>
     </>
