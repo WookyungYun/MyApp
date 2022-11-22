@@ -28,7 +28,7 @@ export default function AppInfo() {
                     이름: {analyzeResult.result.title}
                   </Typography>
                 </Grid>
-                <Grid item xs={8}>
+                <Grid item xs={20}>
                   <Typography fontWeight="900">
                     카테고리:{' '}
                     {analyzeResult.result.genres.map((item) => (

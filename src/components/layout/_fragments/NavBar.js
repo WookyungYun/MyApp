@@ -1,13 +1,14 @@
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, Typography } from '@mui/material';
 
 export default function NavBar() {
   const onClickWeb = () => {
-    alert("준비중입니다.");
+    alert('준비중입니다.');
   };
   return (
     <>
       <Box display="flex" padding="10px">
-        <Button
+        App
+        {/* <Button
           sx={{ flexGrow: 1, mr: 2 }}
           variant="contained"
           display="flex"
@@ -27,7 +28,7 @@ export default function NavBar() {
           <Typography fontSize="30px" fontWeight="900" color="white">
             WEB
           </Typography>
-        </Button>
+        </Button> */}
       </Box>
     </>
   );

@@ -1,7 +1,11 @@
 import { Box } from '@mui/system';
 import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { appIdState, selectCountryState } from '../../state/Analyze';
+import {
+  appIdState,
+  appReviewState,
+  selectCountryState,
+} from '../../state/Analyze';
 import { httpApi } from 'src/api/http';
 import Word from './Word';
 import {
@@ -38,7 +42,12 @@ export default function AppReview() {
   }, [appId, country]);
 
   const handlePage = () => {
-    setPage((prev) => prev + 500);
+    if (data.length === 0) {
+      alert('작성된 리뷰가 존재하지 않습니다.');
+      setPage(0);
+    } else {
+      setPage((prev) => prev + 500);
+    }
   };
 
   const handleClick = () => {
@@ -52,11 +61,11 @@ export default function AppReview() {
   return (
     <>
       <Card sx={{ mb: 5 }}>
-        <Box>
+        {/* <Box>
           워드클라우드 영역
-          {/* <Word /> */}
-        </Box>
-        <Box>필터 영역</Box>
+          <Word data={data} />
+        </Box> */}
+        <Box>워드클라우드 필터 영역</Box>
 
         <Box>
           <Box width="100%" maxHeight={page} p="10px" overflow="hidden">

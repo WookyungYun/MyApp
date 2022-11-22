@@ -77,15 +77,19 @@ export default function Home() {
   return (
     <>
       <Layout>
-        {menuData.map(({ label, route }) => (
-          <Link key={label} href={route}>
-            {label === '로그아웃' ? (
-              <Typography onClick={onClickLogout}>{label}</Typography>
-            ) : (
-              <Typography>{label}</Typography>
-            )}
-          </Link>
-        ))}
+        <Box display="flex" justifyContent="flex-end">
+          {menuData.map(({ label, route }) => (
+            <Link key={label} href={route}>
+              {label === '로그아웃' ? (
+                <Typography onClick={onClickLogout} mr="20px">
+                  {label}
+                </Typography>
+              ) : (
+                <Typography>{label}</Typography>
+              )}
+            </Link>
+          ))}
+        </Box>
         <Box sx={{ width: '800px', m: '0 auto' }}>
           <Box display="flex" marginTop="50px">
             <Select defaultValue="apple" sx={{ width: 95, mr: 3 }}>
@@ -165,7 +169,7 @@ export default function Home() {
 
         {analyzeResult.length !== 0 && isLogIn && (
           <>
-            <Box maxWidth="800px" margin="auto" marginTop="60px">
+            <Box maxWidth="800px" margin="auto" marginTop="20px">
               <AppInfo />
               <AppReview />
               <SimilarApp />

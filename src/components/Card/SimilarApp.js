@@ -12,6 +12,7 @@ export default function SimilarApp() {
   const [info, setInfo] = useState([]);
 
   useEffect(() => {
+    setInfo([]);
     const getSimilarInfo = async () => {
       try {
         const res = await httpApi.post('/job/similarappinfo', {
@@ -34,31 +35,40 @@ export default function SimilarApp() {
           <CardContent sx={{ display: 'flex' }}>
             <Typography fontWeight="900">Similar App</Typography>
           </CardContent>
-          <CardContent>
-            <Carousel swiping slidesToShow="7" withoutControls>
-              {info.map((item) => (
-                <Box key={item.id} height="250px" position="relative">
-                  <Image src={item.icon} alt="image" width={100} height={100} />
-                  <Typography fontWeight="900"> {item.title}</Typography>
-                  <Button
-                    variant="outlined"
-                    sx={{
-                      position: 'absolute',
-                      bottom: '0px',
-                    }}
-                  >
-                    <Typography
-                      fontSize="12px"
-                      fontWeight="800"
-                      color="primary"
+          {info.length === 0 ? (
+            '없음'
+          ) : (
+            <CardContent>
+              <Carousel swiping slidesToShow="7" withoutControls>
+                {info.map((item) => (
+                  <Box key={item.id} height="250px" position="relative">
+                    <Image
+                      src={item.icon}
+                      alt="image"
+                      width={100}
+                      height={100}
+                    />
+                    <Typography fontWeight="900"> {item.title}</Typography>
+                    <Button
+                      variant="outlined"
+                      sx={{
+                        position: 'absolute',
+                        bottom: '0px',
+                      }}
                     >
-                      비교하기
-                    </Typography>
-                  </Button>
-                </Box>
-              ))}
-            </Carousel>
-          </CardContent>
+                      <Typography
+                        fontSize="12px"
+                        fontWeight="800"
+                        color="primary"
+                      >
+                        비교하기
+                      </Typography>
+                    </Button>
+                  </Box>
+                ))}
+              </Carousel>
+            </CardContent>
+          )}
         </>
       </Card>
     </>

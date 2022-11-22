@@ -1,13 +1,11 @@
+import { Box } from '@mui/material';
 import React from 'react';
-import { useRecoilValue } from 'recoil';
-import { appReviewState } from '../../state/Analyze';
 import WordCloud from 'react-d3-cloud';
 
-export default function AppReview() {
-  const review = useRecoilValue(appReviewState);
-  console.log('리뷰결과', review);
+export default function AppReview({ data }) {
+  console.log(data);
 
-  const filteredReview = review.map((item) => item.map((item) => item.text));
+  const filteredReview = data.map((item) => item.map((item) => item.text));
   const filteredWords = filteredReview.join('').split(' ');
 
   console.log('result', filteredWords);
