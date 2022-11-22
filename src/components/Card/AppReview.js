@@ -1,21 +1,10 @@
 import { Box } from '@mui/system';
 import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import {
-  appIdState,
-  appReviewState,
-  selectCountryState,
-} from '../../state/Analyze';
+import { appIdState, selectCountryState } from '../../state/Analyze';
 import { httpApi } from 'src/api/http';
 import Word from './Word';
-import {
-  Button,
-  Card,
-  FormControl,
-  MenuItem,
-  Select,
-  Typography,
-} from '@mui/material';
+import { Button, Card, FormControl, MenuItem, Select } from '@mui/material';
 
 export default function AppReview() {
   const country = useRecoilValue(selectCountryState);
@@ -33,7 +22,9 @@ export default function AppReview() {
           appId,
         });
         console.log('앱리뷰', res.data.result);
-        setData(res.data.result);
+        const _ = require('lodash');
+        const result = _.flatten(res.data.result);
+        setData(result);
       } catch (error) {
         console.log(error);
       }
@@ -58,6 +49,11 @@ export default function AppReview() {
     setOrder(e.target.value);
   };
 
+  const handleDate = () => {
+    const sortedRating = data.sort((a, b) => b.score - a.score);
+    setData(sortedRating);
+  };
+
   return (
     <>
       <Card sx={{ mb: 5 }}>
@@ -72,30 +68,26 @@ export default function AppReview() {
             <Box display="flex" justifyContent="flex-end">
               <FormControl sx={{ m: 2, minWidth: 120 }} size="small">
                 <Select value={order} onChange={handleChange}>
-                  <MenuItem value="평점순">평점순</MenuItem>
+                  <MenuItem onClick={handleDate} value="평점순">
+                    평점순
+                  </MenuItem>
                   <MenuItem value="최신순">최신순</MenuItem>
                 </Select>
               </FormControl>
             </Box>
-            {data.map((item) =>
-              item.map((item) => (
-                <Card key={item.id} sx={{ mb: 2 }}>
-                  <Box m="10px 20px">
-                    <Box
-                      display="flex"
-                      justifyContent="space-between"
-                      mb="10px"
-                    >
-                      <Box fontWeight="800">
-                        {item.title} {item.score}
-                      </Box>
-                      <Box>{item.userName}</Box>
+            {data.map((item) => (
+              <Card key={item.id} sx={{ mb: 2 }}>
+                <Box m="10px 20px">
+                  <Box display="flex" justifyContent="space-between" mb="10px">
+                    <Box fontWeight="800">
+                      {item.title} {item.score}
                     </Box>
-                    <Box>{item.text}</Box>
+                    <Box>{item.userName}</Box>
                   </Box>
-                </Card>
-              ))
-            )}
+                  <Box>{item.text}</Box>
+                </Box>
+              </Card>
+            ))}
           </Box>
           <Box display="flex" justifyContent="center">
             {page === 0 ? (
