@@ -11,11 +11,9 @@ import { httpApi } from 'src/api/http';
 import { useMemo, useEffect, useState } from 'react';
 import { MenuItem, Select, TextField, Typography } from '@mui/material';
 import { Box } from '@mui/system';
-import AppInfo from '../components/Card/AppInfo';
-import AppReview from '../components/Card/AppReview';
-import SimilarApp from '../components/Card/SimilarApp';
 import Layout from '../components/layout/Layout';
 import { LoadingButton } from '@mui/lab';
+import TabBar from '../components/Card/TabBar';
 
 export default function Home() {
   const [appName, setAppName] = useState('');
@@ -166,13 +164,10 @@ export default function Home() {
             </Box>
           </Box>
         )}
-
         {analyzeResult.length !== 0 && isLogIn && (
           <>
             <Box maxWidth="800px" margin="auto" marginTop="20px">
-              <AppInfo />
-              <AppReview />
-              <SimilarApp />
+              <TabBar />
             </Box>
           </>
         )}

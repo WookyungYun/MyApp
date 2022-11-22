@@ -10,11 +10,11 @@ export default function AppReview() {
   const country = useRecoilValue(selectCountryState);
   const appId = useRecoilValue(appIdState);
   const [data, setData] = useState([]);
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(700);
   const [order, setOrder] = useState('최신순');
 
   useEffect(() => {
-    setPage(0);
+    setPage(700);
     const getReview = async () => {
       try {
         const res = await httpApi.post('/job/appreview', {
@@ -61,7 +61,7 @@ export default function AppReview() {
           워드클라우드 영역
           <Word data={data} />
         </Box> */}
-        <Box>워드클라우드 필터 영역</Box>
+        {/* <Box>워드클라우드 필터 영역</Box> */}
 
         <Box>
           <Box width="100%" maxHeight={page} p="10px" overflow="hidden">
@@ -90,22 +90,12 @@ export default function AppReview() {
             ))}
           </Box>
           <Box display="flex" justifyContent="center">
-            {page === 0 ? (
-              <Box>
-                <Button variant="contained" onClick={handlePage} sx={{ m: 2 }}>
-                  리뷰 펼치기
-                </Button>
-              </Box>
-            ) : (
-              <>
-                <Button variant="outlined" onClick={handlePage} sx={{ m: 2 }}>
-                  더보기
-                </Button>
-                <Button variant="outlined" onClick={handleClick} sx={{ m: 2 }}>
-                  리뷰 접기
-                </Button>{' '}
-              </>
-            )}
+            <Button variant="outlined" onClick={handlePage} sx={{ m: 2 }}>
+              더보기
+            </Button>
+            <Button variant="outlined" onClick={handleClick} sx={{ m: 2 }}>
+              리뷰 접기
+            </Button>{' '}
           </Box>
         </Box>
       </Card>
