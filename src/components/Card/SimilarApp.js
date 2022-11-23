@@ -1,4 +1,11 @@
-import { Box, Button, Card, CardContent, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Skeleton,
+  Typography,
+} from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { httpApi } from 'src/api/http';
 import { useRecoilValue } from 'recoil';
@@ -36,12 +43,19 @@ export default function SimilarApp() {
             <Typography fontWeight="900">Similar App</Typography>
           </CardContent>
           {info.length === 0 ? (
-            '없음'
+            <CardContent sx={{ display: 'flex' }}>
+              <Skeleton variant="rectangular" width={700} height={100} />
+            </CardContent>
           ) : (
             <CardContent>
               <Carousel swiping slidesToShow="7" withoutControls>
                 {info.map((item) => (
-                  <Box key={item.id} height="250px" position="relative">
+                  <Box
+                    key={item.id}
+                    height="250px"
+                    position="relative"
+                    marginTop="30px"
+                  >
                     <Image
                       src={item.icon}
                       alt="image"
@@ -49,7 +63,7 @@ export default function SimilarApp() {
                       height={100}
                     />
                     <Typography fontWeight="900"> {item.title}</Typography>
-                    <Button
+                    {/* <Button
                       variant="outlined"
                       sx={{
                         position: 'absolute',
@@ -63,7 +77,7 @@ export default function SimilarApp() {
                       >
                         비교하기
                       </Typography>
-                    </Button>
+                    </Button> */}
                   </Box>
                 ))}
               </Carousel>

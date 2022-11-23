@@ -10,6 +10,11 @@ export const loadingState = atom({
   default: false,
 });
 
+export const selectStoreState = atom({
+  key: 'sotre',
+  default: 'apple',
+});
+
 export const selectCountryState = atom({
   key: 'country',
   default: 'kr',

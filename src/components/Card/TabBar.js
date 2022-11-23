@@ -8,10 +8,10 @@ import { analyzeState } from '../../state/Analyze';
 import AppInfo from './AppInfo';
 import AppReview from './AppReview';
 import SimilarApp from './SimilarApp';
+import Word from './Word';
 
 export default function TabBar() {
   const [value, setValue] = useState('1');
-  const analyzeResult = useRecoilValue(analyzeState);
 
   const handleChange = (e, newValue) => {
     setValue(newValue);
@@ -19,33 +19,30 @@ export default function TabBar() {
   return (
     <>
       <Box sx={{ width: '100%', typography: 'body1' }}>
-        {/* <Box display="flex" justifyContent="center" marginBottom="40px">
-          <Image
-            src={analyzeResult.result.icon}
-            alt="image"
-            width={150}
-            height={150}
-          />
-        </Box> */}
         <TabContext value={value}>
-          <TabList onChange={handleChange} aria-label="lab API tabs example">
+          <TabList
+            onChange={handleChange}
+            aria-label="lab API tabs example"
+            sx={{ marginLeft: 4 }}
+          >
             <Tab
               label="App Review"
               value="1"
-              sx={{ width: 260, fontSize: 20, fontWeight: 900 }}
+              sx={{ width: 255, fontSize: 20, fontWeight: 900 }}
             />
             <Tab
               label="Competitor"
               value="2"
-              sx={{ width: 260, fontSize: 20, fontWeight: 900 }}
+              sx={{ width: 255, fontSize: 20, fontWeight: 900 }}
             />
             <Tab
               label="App Info "
               value="3"
-              sx={{ width: 260, fontSize: 20, fontWeight: 900 }}
+              sx={{ width: 255, fontSize: 20, fontWeight: 900 }}
             />
           </TabList>
           <TabPanel value="1">
+            <Word />
             <AppReview />
           </TabPanel>
           <TabPanel value="2"></TabPanel>

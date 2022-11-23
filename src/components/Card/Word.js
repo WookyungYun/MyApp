@@ -1,27 +1,65 @@
-import { Box } from '@mui/material';
-import React from 'react';
+import { tabPanelClasses } from '@mui/lab';
+import { Box, Button, Chip } from '@mui/material';
+import { Stack } from '@mui/system';
+import React, { useEffect, useState } from 'react';
 import WordCloud from 'react-d3-cloud';
+import { useRecoilValue } from 'recoil';
+import { httpApi } from 'src/api/http';
+import { appIdState, selectCountryState } from '../../state/Analyze';
 
-export default function AppReview({ data }) {
-  console.log(data);
+export default function Word() {
+  const country = useRecoilValue(selectCountryState);
+  const appId = useRecoilValue(appIdState);
+  const [word, setWord] = useState([]);
+  const [tag, setTag] = useState([]);
 
-  const filteredReview = data.map((item) => item.map((item) => item.text));
-  const filteredWords = filteredReview.join('').split(' ');
+  useEffect(() => {
+    const getWord = async () => {
+      const res = await httpApi.get('/job/wordcloud', {
+        params: {
+          country,
+          appId,
+        },
+      });
+      console.log('워드클라우드', res.data.result);
+      const result = res.data.result;
+      const a = Object.entries(result);
+      const b = a
+        .slice(0, 200)
+        .map((item) => ({ text: item[0], value: item[1] * 100 }));
+      setWord(b);
+      setTag(b);
+      console.log('tag', tag);
+    };
+    getWord();
+  }, [country, appId]);
 
-  console.log('result', filteredWords);
+  const handleDelete = (text) => {
+    const filteredTag = tag.filter((ele) => ele.text !== text);
+    setWord(filteredTag);
+    setTag(filteredTag);
+  };
+  return (
+    <>
+      <WordCloud data={word} />
+      <Box maxHeight="200px" overflow="scroll">
+        {tag.map((item, idx) => (
+          // <Button key={idx}>
+          //   {item.text}
+          //   <Button onDelete={() => console.log(!23)}>x</Button>
+          // </Button>
 
-  const filteredDuplicateWord = filteredWords
-    .filter((ele, idx) => {
-      return filteredWords.indexOf(ele) === idx;
-    })
-    .filter((item) => item.length > 1);
-
-  console.log('중복값+한 글자수 제거', filteredWords);
-  const words = filteredDuplicateWord.map((item) => ({
-    text: item,
-    value: 500,
-  }));
-  console.log('객체로', words);
-
-  return <WordCloud data={words} />;
+          <Chip
+            key={idx}
+            name={item.text}
+            label={item.text}
+            variant="outlined"
+            color="primary"
+            sx={{ mr: '3px', mb: '2px' }}
+            onDelete={() => handleDelete(item.text)}
+          ></Chip>
+        ))}
+      </Box>
+    </>
+  );
 }
