@@ -1,6 +1,7 @@
 import { Box } from '@mui/material';
 import { useRouter } from 'next/router';
 import React, { useEffect } from 'react';
+import Mypage from '../../components/MyPage';
 
 export default function MyPage() {
   const router = useRouter();
@@ -12,7 +13,7 @@ export default function MyPage() {
   //loadevent , 페이지 수정, 로그인 토큰없을때 처리 다시하기
   return (
     <>
-      <Box>MyPage</Box>
+      <Mypage />
     </>
   );
 }

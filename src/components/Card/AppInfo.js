@@ -1,4 +1,12 @@
-import { Box, Card, CardContent, Chip, Grid, Typography } from '@mui/material';
+import {
+  Box,
+  Card,
+  CardContent,
+  Chip,
+  Grid,
+  Skeleton,
+  Typography,
+} from '@mui/material';
 import Image from 'next/image';
 import React from 'react';
 import { useRecoilValue } from 'recoil';

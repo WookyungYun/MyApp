@@ -1,21 +1,14 @@
 import { Box } from '@mui/system';
 import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
+import { StarIcon } from '@mui/icons-material';
 import {
   appIdState,
   selectCountryState,
   selectStoreState,
 } from '../../state/Analyze';
 import { httpApi } from 'src/api/http';
-import {
-  Button,
-  Card,
-  FormControl,
-  MenuItem,
-  Select,
-  Pagination,
-} from '@mui/material';
-import Word from './Word';
+import { Card, Pagination } from '@mui/material';
 
 export default function AppReview() {
   const store = useRecoilValue(selectStoreState);
@@ -24,7 +17,8 @@ export default function AppReview() {
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
   const [item, setItem] = useState(5);
-  // const [order, setOrder] = useState('최신순');
+
+  console.log(appId);
 
   useEffect(() => {
     const getReview = async () => {
@@ -35,9 +29,7 @@ export default function AppReview() {
             appId,
           });
           console.log('앱리뷰', res.data.result);
-          const _ = require('lodash');
-          const result = _.flatten(res.data.result);
-          setData(result);
+          setData(res.data.result);
         }
         if (store === 'google') {
           const res = await httpApi.post('/job/gplayappreview', {
@@ -45,9 +37,7 @@ export default function AppReview() {
             appId,
           });
           console.log('앱리뷰', res.data.result);
-          const _ = require('lodash');
-          const result = _.flatten(res.data.result);
-          setData(result);
+          setData(res.data.result);
         }
       } catch (error) {
         console.log(error);
@@ -56,28 +46,18 @@ export default function AppReview() {
     getReview();
   }, [appId, country, store]);
 
-  //최신순? 평점순? 옵션 선택
-  const handleChange = (e) => {
-    setOrder(e.target.value);
-  };
-
-  const handleItem = (e) => {
-    setItem(e.target.value);
-  };
   const handlePageChange = (e, page) => {
     setPage(page);
   };
 
-  console.log(page);
   //평점순으로 정렬
-  const handleDate = () => {
-    const sortedRating = data.sort((a, b) => b.score - a.score);
-    setData(sortedRating);
-  };
+  // const handleDate = () => {
+  //   const sortedRating = data.sort((a, b) => b.score - a.score);
+  //   setData(sortedRating);
+  // };
 
   return (
     <>
-      {/* <Word /> */}
       <Card sx={{ mb: 5 }}>
         <Box>
           <Box width="100%" p="10px" overflow="hidden">
@@ -93,21 +73,33 @@ export default function AppReview() {
                       justifyContent="space-between"
                       mb="10px"
                     >
-                      <Box fontWeight="800">
-                        {item.title} {item.score}
+                      <Box fontWeight="800" display="flex" sx={{ mr: 2 }}>
+                        {item.title}
+                        {item.score === 1 && <Box>⭐</Box>}
+                        {item.score === 2 && <Box>⭐⭐</Box>}
+                        {item.score === 3 && <Box>⭐⭐⭐</Box>}
+                        {item.score === 4 && <Box>⭐⭐⭐⭐</Box>}
+                        {item.score === 5 && <Box>⭐⭐⭐⭐⭐</Box>}{' '}
                       </Box>
-                      <Box>{item.userName}</Box>
+                      <Box></Box>
                     </Box>
-                    <Box>{item.text}</Box>
+                    <Box sx={{ mb: '10px' }}>{item.text}</Box>
+                    <Box sx={{ fontSize: '13px', color: 'gray.500' }}>
+                      by {item.userName}
+                    </Box>
                   </Box>
                 </Card>
               ))}
             <Box sx={{ display: 'flex', justifyContent: ' center' }}>
-              <Pagination
-                count={data.length / item}
-                page={page}
-                onChange={handlePageChange}
-              ></Pagination>
+              {data.length > 5 ? (
+                <Pagination
+                  count={Math.ceil(data.length / item)}
+                  page={page}
+                  onChange={handlePageChange}
+                ></Pagination>
+              ) : (
+                <Box>1</Box>
+              )}
             </Box>
           </Box>
         </Box>

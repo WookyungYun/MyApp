@@ -1,4 +1,6 @@
 import { Box, Button, Typography } from '@mui/material';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 export default function NavBar() {
   const onClickWeb = () => {
@@ -6,29 +8,13 @@ export default function NavBar() {
   };
   return (
     <>
-      <Box display="flex" padding="10px">
-        App
-        {/* <Button
-          sx={{ flexGrow: 1, mr: 2 }}
-          variant="contained"
-          display="flex"
-          justifyContent="center"
-          alignItems="center">
-          <Typography fontSize="30px" fontWeight="900" color="white">
-            APP
-          </Typography>
-        </Button>
-        <Button
-          sx={{ flexGrow: 1 }}
-          variant="contained"
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          onClick={onClickWeb}>
-          <Typography fontSize="30px" fontWeight="900" color="white">
-            WEB
-          </Typography>
-        </Button> */}
+      <Box display="flex" justifyContent="space-around" padding="10px">
+        <Box>
+          <Link href="/">Home</Link>
+        </Box>
+
+        <Box>appSearch</Box>
+        <Box>keywordSearch</Box>
       </Box>
     </>
   );

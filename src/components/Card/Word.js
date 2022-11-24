@@ -1,6 +1,4 @@
-import { tabPanelClasses } from '@mui/lab';
 import { Box, Button, Chip } from '@mui/material';
-import { Stack } from '@mui/system';
 import React, { useEffect, useState } from 'react';
 import WordCloud from 'react-d3-cloud';
 import { useRecoilValue } from 'recoil';
@@ -11,7 +9,7 @@ export default function Word() {
   const country = useRecoilValue(selectCountryState);
   const appId = useRecoilValue(appIdState);
   const [word, setWord] = useState([]);
-  const [tag, setTag] = useState([]);
+  const [idx, setIdx] = useState(0);
 
   useEffect(() => {
     const getWord = async () => {
@@ -23,32 +21,33 @@ export default function Word() {
       });
       console.log('워드클라우드', res.data.result);
       const result = res.data.result;
-      const a = Object.entries(result);
-      const b = a
-        .slice(0, 200)
+      const resultArray = Object.entries(result);
+      const wordObj = resultArray
+        .slice(idx, idx + 200)
         .map((item) => ({ text: item[0], value: item[1] * 100 }));
-      setWord(b);
-      setTag(b);
-      console.log('tag', tag);
+      setWord(wordObj);
     };
     getWord();
-  }, [country, appId]);
+  }, [country, appId, idx]);
 
   const handleDelete = (text) => {
-    const filteredTag = tag.filter((ele) => ele.text !== text);
+    const filteredTag = word.filter((ele) => ele.text !== text);
     setWord(filteredTag);
-    setTag(filteredTag);
   };
   return (
     <>
       <WordCloud data={word} />
-      <Box maxHeight="200px" overflow="scroll">
-        {tag.map((item, idx) => (
-          // <Button key={idx}>
-          //   {item.text}
-          //   <Button onDelete={() => console.log(!23)}>x</Button>
-          // </Button>
-
+      <Button
+        variant="contained"
+        onClick={() => {
+          setIdx((prev) => prev + 200);
+        }}
+        sx={{ mb: 5 }}
+      >
+        키워드 더보기
+      </Button>
+      <Box maxHeight="200px" overflow={word.length > 20 ? 'scroll' : 'none'}>
+        {word.map((item, idx) => (
           <Chip
             key={idx}
             name={item.text}
