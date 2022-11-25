@@ -4,22 +4,22 @@ import { logInState } from '../state/LogIn';
 import {
   analyzeState,
   appIdState,
-  loadingState,
   selectCountryState,
   selectStoreState,
 } from '../state/Analyze';
 import { httpApi } from 'src/api/http';
 import { useMemo, useEffect, useState } from 'react';
-import { Button, MenuItem, Select, TextField, Typography } from '@mui/material';
+import { MenuItem, Select, TextField, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import Layout from '../components/layout/Layout';
 import { LoadingButton } from '@mui/lab';
 import TabBar from '../components/Card/TabBar';
 import Image from 'next/image';
 import { useMutation, useQuery } from 'react-query';
-import { ConnectingAirportsOutlined } from '@mui/icons-material';
+import { useRouter } from 'next/router';
 
 export default function Home() {
+  const router = useRouter();
   const [appName, setAppName] = useState('');
   const [store, setStore] = useRecoilState(selectStoreState);
   const [isLogIn, setIsLogIn] = useRecoilState(logInState);
@@ -69,8 +69,8 @@ export default function Home() {
           },
         });
         const responseId = response.data.result;
-        console.log(responseId);
-        setReId(responseId);
+        console.log(responseId[0]);
+        setReId(responseId[0]);
       }
     },
     refetchOnWindowFocus: false,
@@ -84,6 +84,7 @@ export default function Home() {
         appId: reId,
       });
       const result = res.data.result;
+      console.log('apple', result);
       setAppId(result.id);
       setAnalyzeResult({ result });
     }
@@ -93,7 +94,7 @@ export default function Home() {
         appId: reId,
       });
       const result = res.data.result;
-      console.log(result);
+      console.log('google', result);
       setAppId(result.id);
       setAnalyzeResult({ result });
     }
@@ -108,60 +109,8 @@ export default function Home() {
     refetch();
     console.log(reId);
     mutate({ country, appId });
+    router.push({ pathname: '', query: { keyword: `${appName}` } });
   };
-
-  // //Id받아오기+분석하기
-  // const analyzeApp = async () => {
-  //   try {
-  //     console.log(country, '국가');
-
-  //     //기존앱 받아오기
-  //     if (store === 'apple') {
-  //       const response = await httpApi.get('/job/appsearch', {
-  //         params: {
-  //           name: appName,
-  //         },
-  //       });
-  //       const responseId = response.data.result;
-  //       console.log(responseId);
-  //       setIsLoading(true);
-  //       const res = await httpApi.post('/job/appinfo', {
-  //         country,
-  //         appId: responseId,
-  //       });
-  //       const result = res.data.result;
-  //       console.log(store);
-  //       console.log(result);
-  //       const Id = result.id;
-  //       setAppId(Id);
-  //       setIsLoading(false);
-  //       setAnalyzeResult({ result });
-  //     } else if (store === 'google') {
-  //       const response = await httpApi.get('/job/gpappsearch', {
-  //         params: {
-  //           name: appName,
-  //         },
-  //       });
-  //       const responseId = response.data.result;
-  //       console.log(responseId);
-  //       setIsLoading(true);
-  //       const res = await httpApi.post('/job/gplayappinfo', {
-  //         country,
-  //         appId: responseId,
-  //       });
-  //       const result = res.data.result;
-  //       console.log(store);
-  //       const Id = result.id;
-  //       console.log(result);
-  //       setAppId(Id);
-  //       console.log(appId);
-  //       setIsLoading(false);
-  //       setAnalyzeResult({ result });
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
 
   return (
     <>

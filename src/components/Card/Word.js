@@ -21,6 +21,8 @@ export default function Word() {
           appId,
         },
       });
+      console.log('dd', response.data);
+
       return response.data;
     },
     onSuccess: (data) => {
@@ -44,7 +46,7 @@ export default function Word() {
       <Button
         variant="contained"
         onClick={() => {
-          setIdx((prev) => prev + 200);
+          setIdx((prev) => prev + 100);
         }}
         sx={{ mb: 5 }}
       >

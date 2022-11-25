@@ -5,11 +5,6 @@ export const analyzeState = atom({
   default: [],
 });
 
-export const loadingState = atom({
-  key: 'loadingState',
-  default: false,
-});
-
 export const selectStoreState = atom({
   key: 'sotre',
   default: 'apple',
