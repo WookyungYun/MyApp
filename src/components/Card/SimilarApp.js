@@ -1,40 +1,39 @@
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Skeleton,
-  Typography,
-} from '@mui/material';
+import { Box, Card, CardContent, Skeleton, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { httpApi } from 'src/api/http';
 import { useRecoilValue } from 'recoil';
 import { selectCountryState, appIdState } from '../../state/Analyze';
 import Image from 'next/image';
 import Carousel from 'nuka-carousel/lib/carousel';
+import { useMutation } from 'react-query';
 
 export default function SimilarApp() {
   const country = useRecoilValue(selectCountryState);
   const appId = useRecoilValue(appIdState);
   const [info, setInfo] = useState([]);
 
-  useEffect(() => {
-    setInfo([]);
-    const getSimilarInfo = async () => {
-      try {
-        const res = await httpApi.post('/job/similarappinfo', {
-          country,
-          appId,
-        });
-        console.log('유사앱', res.data.result);
-        setInfo(res.data.result);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    getSimilarInfo();
-  }, [appId, country]);
+  const getSimilarInfo = async () => {
+    const res = await httpApi.post('/job/similarappinfo', {
+      country,
+      appId,
+    });
+    console.log('유사앱', res.data.result);
+    setInfo(res.data.result);
+  };
 
+  const { mutate, onError, isLoading } = useMutation(getSimilarInfo, {
+    onError: () => {
+      console.log('error');
+    },
+  });
+
+  useEffect(() => {
+    if (country && appId) {
+      mutate({ country, appId });
+    }
+  }, [mutate, country, appId]);
+
+  console.log(onError, isLoading);
   return (
     <>
       <Card>
@@ -42,7 +41,7 @@ export default function SimilarApp() {
           <CardContent sx={{ display: 'flex' }}>
             <Typography fontWeight="900">Similar App</Typography>
           </CardContent>
-          {info.length === 0 ? (
+          {isLoading ? (
             <CardContent sx={{ display: 'flex' }}>
               <Skeleton variant="rectangular" width={700} height={100} />
             </CardContent>
@@ -63,25 +62,13 @@ export default function SimilarApp() {
                       height={100}
                     />
                     <Typography fontWeight="900"> {item.title}</Typography>
-                    {/* <Button
-                      variant="outlined"
-                      sx={{
-                        position: 'absolute',
-                        bottom: '0px',
-                      }}
-                    >
-                      <Typography
-                        fontSize="12px"
-                        fontWeight="800"
-                        color="primary"
-                      >
-                        비교하기
-                      </Typography>
-                    </Button> */}
                   </Box>
                 ))}
               </Carousel>
             </CardContent>
+          )}
+          {onError && isLoading === false && (
+            <CardContent>유사앱이 없습니다.</CardContent>
           )}
         </>
       </Card>

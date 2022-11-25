@@ -7,6 +7,7 @@ import { httpApi } from 'src/api/http';
 import { useRouter } from 'next/router';
 import { useRecoilState } from 'recoil';
 import { logInState } from '../../state/LogIn';
+import { useMutation } from 'react-query';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -27,17 +28,27 @@ export default function LoginPage() {
 
   const emailRegRex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
 
-  const handleClickLogin = async () => {
+  const LoginFn = async () => {
     const result = await httpApi.post('/auth/login', {
       email: email.current,
       password: password.current,
     });
-    setIsLogIn(true);
-    if (result.status === 201) {
-      router.push('/');
-    }
-
     localStorage.setItem('token', result.data.result.access_token);
+  };
+
+  const { mutate, isLoading } = useMutation(LoginFn, {
+    onSuccess: () => {
+      setIsLogIn(true);
+      router.push('/');
+    },
+    onError: () => {
+      console.log('로그인 에러');
+    },
+  });
+  console.log(isLoading);
+
+  const handleClickLogin = () => {
+    mutate({ email: email.current, password: password.current });
   };
 
   const onSubmit = async () => {

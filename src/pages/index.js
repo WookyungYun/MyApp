@@ -16,6 +16,8 @@ import Layout from '../components/layout/Layout';
 import { LoadingButton } from '@mui/lab';
 import TabBar from '../components/Card/TabBar';
 import Image from 'next/image';
+import { useMutation, useQuery } from 'react-query';
+import { ConnectingAirportsOutlined } from '@mui/icons-material';
 
 export default function Home() {
   const [appName, setAppName] = useState('');
@@ -23,8 +25,8 @@ export default function Home() {
   const [isLogIn, setIsLogIn] = useRecoilState(logInState);
   const [country, setCountry] = useRecoilState(selectCountryState);
   const [analyzeResult, setAnalyzeResult] = useRecoilState(analyzeState); //appInfo에 들어갈내용
-  const [isLoading, setIsLoading] = useRecoilState(loadingState);
   const [appId, setAppId] = useRecoilState(appIdState);
+  const [reId, setReId] = useState('');
 
   const menuData = useMemo(() => {
     if (isLogIn === null) return [];
@@ -42,16 +44,14 @@ export default function Home() {
     setIsLogIn(false);
   };
 
+  //app 이름 저장
   const handleValue = (e) => {
     setAppName(e.target.value);
   };
 
-  //Id받아오기+분석하기
-  const analyzeApp = async () => {
-    try {
-      console.log(country, '국가');
-
-      //기존앱 받아오기
+  const { refetch } = useQuery({
+    queryKey: ['getId', appName],
+    queryFn: async () => {
       if (store === 'apple') {
         const response = await httpApi.get('/job/appsearch', {
           params: {
@@ -59,20 +59,10 @@ export default function Home() {
           },
         });
         const responseId = response.data.result;
-        console.log(responseId);
-        setIsLoading(true);
-        const res = await httpApi.post('/job/appinfo', {
-          country,
-          appId: responseId,
-        });
-        const result = res.data.result;
-        console.log(store);
-        console.log(result);
-        const Id = result.id;
-        setAppId(Id);
-        setIsLoading(false);
-        setAnalyzeResult({ result });
-      } else if (store === 'google') {
+
+        setReId(responseId);
+      }
+      if (store === 'google') {
         const response = await httpApi.get('/job/gpappsearch', {
           params: {
             name: appName,
@@ -80,24 +70,98 @@ export default function Home() {
         });
         const responseId = response.data.result;
         console.log(responseId);
-        setIsLoading(true);
-        const res = await httpApi.post('/job/gplayappinfo', {
-          country,
-          appId: responseId,
-        });
-        const result = res.data.result;
-        console.log(store);
-        const Id = result.id;
-        console.log(result);
-        setAppId(Id);
-        console.log(appId);
-        setIsLoading(false);
-        setAnalyzeResult({ result });
+        setReId(responseId);
       }
-    } catch (error) {
-      console.log(error);
+    },
+    refetchOnWindowFocus: false,
+    enabled: false,
+  });
+
+  const postInfo = async () => {
+    if (store === 'apple') {
+      const res = await httpApi.post('/job/appinfo', {
+        country,
+        appId: reId,
+      });
+      const result = res.data.result;
+      setAppId(result.id);
+      setAnalyzeResult({ result });
+    }
+    if (store === 'google') {
+      const res = await httpApi.post('/job/gplayappinfo', {
+        country,
+        appId: reId,
+      });
+      const result = res.data.result;
+      console.log(result);
+      setAppId(result.id);
+      setAnalyzeResult({ result });
     }
   };
+  const { mutate, isLoading } = useMutation(postInfo, {
+    onError: () => {
+      console.log('error');
+    },
+  });
+
+  const onClickGetId = () => {
+    refetch();
+    console.log(reId);
+    mutate({ country, appId });
+  };
+
+  // //Id받아오기+분석하기
+  // const analyzeApp = async () => {
+  //   try {
+  //     console.log(country, '국가');
+
+  //     //기존앱 받아오기
+  //     if (store === 'apple') {
+  //       const response = await httpApi.get('/job/appsearch', {
+  //         params: {
+  //           name: appName,
+  //         },
+  //       });
+  //       const responseId = response.data.result;
+  //       console.log(responseId);
+  //       setIsLoading(true);
+  //       const res = await httpApi.post('/job/appinfo', {
+  //         country,
+  //         appId: responseId,
+  //       });
+  //       const result = res.data.result;
+  //       console.log(store);
+  //       console.log(result);
+  //       const Id = result.id;
+  //       setAppId(Id);
+  //       setIsLoading(false);
+  //       setAnalyzeResult({ result });
+  //     } else if (store === 'google') {
+  //       const response = await httpApi.get('/job/gpappsearch', {
+  //         params: {
+  //           name: appName,
+  //         },
+  //       });
+  //       const responseId = response.data.result;
+  //       console.log(responseId);
+  //       setIsLoading(true);
+  //       const res = await httpApi.post('/job/gplayappinfo', {
+  //         country,
+  //         appId: responseId,
+  //       });
+  //       const result = res.data.result;
+  //       console.log(store);
+  //       const Id = result.id;
+  //       console.log(result);
+  //       setAppId(Id);
+  //       console.log(appId);
+  //       setIsLoading(false);
+  //       setAnalyzeResult({ result });
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   return (
     <>
@@ -150,12 +214,12 @@ export default function Home() {
                 fontWeight="900"
                 fontSize="16px"
                 color="common.white"
-                onClick={() => analyzeApp()}
+                onClick={onClickGetId}
               >
                 분석하기
               </Typography>
             </LoadingButton>
-            {analyzeResult.length !== 0 && isLogIn && (
+            {isLoading === false && isLogIn && (
               <LoadingButton
                 loading={isLoading}
                 type="submit"
@@ -176,7 +240,7 @@ export default function Home() {
         <Box width="630px" m="0 auto">
           <Box display="flex" justifyContent="center" mt="50px"></Box>
         </Box>
-        {analyzeResult.length == 0 && (
+        {isLoading === true && (
           <Box maxWidth="800px" margin="auto" mt="60px">
             <Box display="flex" height="250px" mt="100px">
               <Box
@@ -213,16 +277,10 @@ export default function Home() {
           </Box>
         )}
 
-        {analyzeResult.length !== 0 && isLogIn && (
+        {analyzeResult.length !== 0 && isLogIn && isLoading === false && (
           <>
             <Box maxWidth="800px" margin="auto" marginTop="10px">
-              <Box
-                display="flex"
-                // flexDirection="column"
-                // alignItems="center"
-                justifyContent="center"
-                marginBottom="30px"
-              >
+              <Box display="flex" justifyContent="center" marginBottom="30px">
                 <Box borderRadius="30px" overflow="hidden">
                   <Image
                     src={analyzeResult.result.icon}

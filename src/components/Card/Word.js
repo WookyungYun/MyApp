@@ -4,6 +4,7 @@ import WordCloud from 'react-d3-cloud';
 import { useRecoilValue } from 'recoil';
 import { httpApi } from 'src/api/http';
 import { appIdState, selectCountryState } from '../../state/Analyze';
+import { useQuery } from 'react-query';
 
 export default function Word() {
   const country = useRecoilValue(selectCountryState);
@@ -11,24 +12,26 @@ export default function Word() {
   const [word, setWord] = useState([]);
   const [idx, setIdx] = useState(0);
 
-  useEffect(() => {
-    const getWord = async () => {
-      const res = await httpApi.get('/job/wordcloud', {
+  const { isLoading, data } = useQuery({
+    querykey: ['getWords', country, appId],
+    queryFn: async () => {
+      const response = await httpApi.get('/job/wordcloud', {
         params: {
           country,
           appId,
         },
       });
-      console.log('워드클라우드', res.data.result);
-      const result = res.data.result;
-      const resultArray = Object.entries(result);
+      return response.data;
+    },
+    onSuccess: (data) => {
+      console.log(data.result, 'data.result');
+      const resultArray = Object.entries(data.result);
       const wordObj = resultArray
-        .slice(idx, idx + 200)
+        .slice(idx, idx + 100)
         .map((item) => ({ text: item[0], value: item[1] * 100 }));
       setWord(wordObj);
-    };
-    getWord();
-  }, [country, appId, idx]);
+    },
+  });
 
   const handleDelete = (text) => {
     const filteredTag = word.filter((ele) => ele.text !== text);
@@ -36,7 +39,8 @@ export default function Word() {
   };
   return (
     <>
-      <WordCloud data={word} />
+      {isLoading === true ? '로딩중입니다' : <WordCloud data={word} />}
+
       <Button
         variant="contained"
         onClick={() => {

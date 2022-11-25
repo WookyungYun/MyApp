@@ -4,6 +4,7 @@ import { Box } from '@mui/system';
 import { useRouter } from 'next/router';
 import { useRef } from 'react';
 import { useForm } from 'react-hook-form';
+import { useMutation } from 'react-query';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -17,15 +18,25 @@ export default function RegisterPage() {
   const password = useRef({});
   password.current = watch('password', '');
 
-  const onSubmit = async () => {
+  const postRegister = async () => {
     const result = await httpApi.post('/auth/signup', {
       email: email.current,
       password: password.current,
     });
     console.log(result);
-    alert('회원가입 성공!');
-    router.push('/login');
   };
+
+  const { mutate } = useMutation(postRegister, {
+    onSuccess: () => {
+      alert('회원가입 성공!');
+      router.push('/login');
+    },
+  });
+
+  const handleRegister = () => {
+    mutate({ email: email.current, password: password.current });
+  };
+
   const emailRegRex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
 
   return (
@@ -88,7 +99,7 @@ export default function RegisterPage() {
       ></TextField>
       <Box>
         <Button
-          onClick={handleSubmit(onSubmit)}
+          onClick={handleRegister}
           fullWidth
           type="submit"
           variant="contained"

@@ -1,7 +1,6 @@
 import { Box } from '@mui/system';
 import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { StarIcon } from '@mui/icons-material';
 import {
   appIdState,
   selectCountryState,
@@ -9,42 +8,49 @@ import {
 } from '../../state/Analyze';
 import { httpApi } from 'src/api/http';
 import { Card, Pagination } from '@mui/material';
+import { useMutation } from 'react-query';
 
 export default function AppReview() {
   const store = useRecoilValue(selectStoreState);
   const country = useRecoilValue(selectCountryState);
   const appId = useRecoilValue(appIdState);
-  const [data, setData] = useState([]);
+  const [reviewData, setReveiwData] = useState([]);
   const [page, setPage] = useState(1);
   const [item, setItem] = useState(5);
 
   console.log(appId);
 
+  const getReview = async () => {
+    if (store === 'apple') {
+      const res = await httpApi.post('/job/appreview', {
+        country,
+        appId,
+      });
+      setReveiwData(res.data.result);
+    } else if (store === 'google') {
+      const res = await httpApi.post('/job/gplayappreview', {
+        country,
+        appId,
+      });
+      setReveiwData(res.data.result);
+    }
+  };
+
+  const { mutate, data } = useMutation(getReview, {
+    onSuccess: () => {
+      console.log('data', data);
+      console.log(reviewData);
+    },
+    onError: () => {
+      console.log('error');
+    },
+  });
+
   useEffect(() => {
-    const getReview = async () => {
-      try {
-        if (store === 'apple') {
-          const res = await httpApi.post('/job/appreview', {
-            country,
-            appId,
-          });
-          console.log('앱리뷰', res.data.result);
-          setData(res.data.result);
-        }
-        if (store === 'google') {
-          const res = await httpApi.post('/job/gplayappreview', {
-            country,
-            appId,
-          });
-          console.log('앱리뷰', res.data.result);
-          setData(res.data.result);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    getReview();
-  }, [appId, country, store]);
+    if (country && appId) {
+      mutate({ country, appId });
+    }
+  }, [mutate, appId, country]);
 
   const handlePageChange = (e, page) => {
     setPage(page);
@@ -63,7 +69,7 @@ export default function AppReview() {
           <Box width="100%" p="10px" overflow="hidden">
             <Box display="flex" justifyContent="flex-end"></Box>
 
-            {data
+            {reviewData
               .slice(item * (page - 1), item * (page - 1) + item)
               .map((item) => (
                 <Card key={item.id} sx={{ mb: 2 }}>
@@ -91,9 +97,9 @@ export default function AppReview() {
                 </Card>
               ))}
             <Box sx={{ display: 'flex', justifyContent: ' center' }}>
-              {data.length > 5 ? (
+              {reviewData.length > 5 ? (
                 <Pagination
-                  count={Math.ceil(data.length / item)}
+                  count={Math.ceil(reviewData.length / item)}
                   page={page}
                   onChange={handlePageChange}
                 ></Pagination>
