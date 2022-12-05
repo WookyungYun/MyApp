@@ -8,10 +8,8 @@ import {
 import ThemeComponent from '../styles/theme/ThemeComponent';
 import { CacheProvider } from '@emotion/react';
 import { createEmotionCache } from 'src/utils/create-emotion-cache';
-import { RecoilRoot } from 'recoil';
-import { QueryClient, QueryClientProvider } from 'react-query';
-
-const queryClient = new QueryClient();
+import { Provider } from 'react-redux';
+import { store } from '../store';
 
 Router.events.on('routeChangeStart', () => {
   //경로가 변경되기 시작할때 발생
@@ -36,22 +34,20 @@ export default function App({
   pageProps,
 }) {
   return (
-    <QueryClientProvider client={queryClient}>
+    <Provider store={store}>
       <CacheProvider value={emotionCache}>
-        <RecoilRoot>
-          <SettingsProvider>
-            <SettingsConsumer>
-              {({ settings }) => {
-                return (
-                  <ThemeComponent settings={settings}>
-                    <Component {...pageProps} />
-                  </ThemeComponent>
-                );
-              }}
-            </SettingsConsumer>
-          </SettingsProvider>
-        </RecoilRoot>
+        <SettingsProvider>
+          <SettingsConsumer>
+            {({ settings }) => {
+              return (
+                <ThemeComponent settings={settings}>
+                  <Component {...pageProps} />
+                </ThemeComponent>
+              );
+            }}
+          </SettingsConsumer>
+        </SettingsProvider>
       </CacheProvider>
-    </QueryClientProvider>
+    </Provider>
   );
 }

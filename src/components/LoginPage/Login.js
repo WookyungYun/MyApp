@@ -5,14 +5,14 @@ import { useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { httpApi } from 'src/api/http';
 import { useRouter } from 'next/router';
-import { useRecoilState } from 'recoil';
-import { logInState } from '../../state/LogIn';
-import { useMutation } from 'react-query';
+import { useDispatch, useSelector } from 'react-redux';
+import { setIsLogIn } from '../../reduxSlice/appSlice';
 
 export default function LoginPage() {
   const router = useRouter();
-
-  const [logIn, setIsLogIn] = useRecoilState(logInState);
+  const dispatch = useDispatch();
+  const isLogIn = useSelector((state) => state.appInfo.isLogIn);
+  console.log('isLogIn', isLogIn);
 
   const {
     register,
@@ -28,32 +28,14 @@ export default function LoginPage() {
 
   const emailRegRex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
 
-  const LoginFn = async () => {
+  const onSubmit = async () => {
     const result = await httpApi.post('/auth/login', {
       email: email.current,
       password: password.current,
     });
     localStorage.setItem('token', result.data.result.access_token);
-  };
-
-  const { mutate, isLoading } = useMutation(LoginFn, {
-    onSuccess: () => {
-      setIsLogIn(true);
-      router.push('/');
-    },
-    onError: () => {
-      console.log('로그인 에러');
-    },
-  });
-  console.log(isLoading);
-
-  const handleClickLogin = () => {
-    mutate({ email: email.current, password: password.current });
-  };
-
-  const onSubmit = async () => {
-    handleClickLogin();
-    setIsLogIn(true);
+    dispatch(setIsLogIn(true));
+    router.push('/');
   };
 
   return (
@@ -102,11 +84,11 @@ export default function LoginPage() {
         <Box>
           <LoadingButton
             fullWidth
-            loading={logIn}
+            loading={isLogIn}
             type="submit"
             variant="contained"
             sx={{ marginBottom: 10 }}
-            onClick={handleClickLogin}
+            onClick={handleSubmit(onSubmit)}
           >
             Sign In
           </LoadingButton>

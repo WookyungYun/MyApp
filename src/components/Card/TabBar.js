@@ -1,10 +1,7 @@
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 import { Button, Tab, Tabs, Typography } from '@mui/material';
 import { Box } from '@mui/system';
-import Image from 'next/image';
 import { useState } from 'react';
-import { useRecoilValue } from 'recoil';
-import { analyzeState } from '../../state/Analyze';
 import AppInfo from './AppInfo';
 import AppReview from './AppReview';
 import SimilarApp from './SimilarApp';
