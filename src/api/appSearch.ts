@@ -12,8 +12,14 @@ export const getPostReview = async (
   });
 };
 
-export const getPostSimilarApp = async (country: string, appId: string) => {
-  return await httpApi.post('/job/similarappinfo', {
+export const getPostSimilarApp = async (
+  store: string,
+  country: string,
+  appId: string
+) => {
+  const url =
+    store === 'apple' ? '/job/similarappinfo' : '/job/gplaysimilarapp';
+  return await httpApi.post(url, {
     country,
     appId,
   });

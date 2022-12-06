@@ -78,6 +78,7 @@ export const getId = createAsyncThunk(
         thunkAPI.dispatch(setReview(reviews.data.result));
 
         const similarAppInfo = await getPostSimilarApp(
+          payload.store,
           payload.country,
           res.data.result[0]
         );
