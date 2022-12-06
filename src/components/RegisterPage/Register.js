@@ -4,7 +4,6 @@ import { Box } from '@mui/system';
 import { useRouter } from 'next/router';
 import { useRef } from 'react';
 import { useForm } from 'react-hook-form';
-import { useMutation } from 'react-query';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -18,23 +17,14 @@ export default function RegisterPage() {
   const password = useRef({});
   password.current = watch('password', '');
 
-  const postRegister = async () => {
+  const handleRegister = async () => {
     const result = await httpApi.post('/auth/signup', {
       email: email.current,
       password: password.current,
     });
-    console.log(result);
-  };
-
-  const { mutate } = useMutation(postRegister, {
-    onSuccess: () => {
-      alert('회원가입 성공!');
+    if ((result.data.message = 'Successful')) {
       router.push('/login');
-    },
-  });
-
-  const handleRegister = () => {
-    mutate({ email: email.current, password: password.current });
+    }
   };
 
   const emailRegRex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
@@ -54,60 +44,61 @@ export default function RegisterPage() {
           Welcome!
         </Typography>
       </Box>
-
-      <TextField
-        fullWidth
-        autoFocus
-        label="Email Address"
-        name="email"
-        sx={{ marginBottom: 10 }}
-        {...register('email', {
-          required: '이메일은 필수입니다.',
-          validate: (value) =>
-            emailRegRex.test(value) || '이메일 형식에 맞게 입력해주세요.',
-        })}
-        error={Boolean(errors.email)}
-        helperText={errors.email?.message}
-      ></TextField>
-      <TextField
-        fullWidth
-        name="password"
-        label="Password"
-        type="password"
-        sx={{ marginBottom: 10 }}
-        {...register('password', {
-          required: '비밀번호는 필수입니다.',
-          minLength: { value: 8, message: '최소 8자 이상 입력해주세요.' },
-        })}
-        error={Boolean(errors.password)}
-        helperText={errors.password?.message}
-      ></TextField>
-
-      <TextField
-        fullWidth
-        name="confirmPassword"
-        label="Confirm Password"
-        type="password"
-        sx={{ marginBottom: 15 }}
-        {...register('confirmPassword', {
-          required: '비밀번호는 필수입니다.',
-          validate: (value) =>
-            value === password.current || '비밀번호가 일치하지 않습니다.',
-        })}
-        error={Boolean(errors.confirmPassword)}
-        helperText={errors.confirmPassword?.message}
-      ></TextField>
-      <Box>
-        <Button
-          onClick={handleRegister}
+      <form onSubmit={handleSubmit(handleRegister)}>
+        <TextField
           fullWidth
-          type="submit"
-          variant="contained"
+          autoFocus
+          label="Email Address"
+          name="email"
           sx={{ marginBottom: 10 }}
-        >
-          Sign up
-        </Button>
-      </Box>
+          {...register('email', {
+            required: '이메일은 필수입니다.',
+            validate: (value) =>
+              emailRegRex.test(value) || '이메일 형식에 맞게 입력해주세요.',
+          })}
+          error={Boolean(errors.email)}
+          helperText={errors.email?.message}
+        ></TextField>
+        <TextField
+          fullWidth
+          name="password"
+          label="Password"
+          type="password"
+          sx={{ marginBottom: 10 }}
+          {...register('password', {
+            required: '비밀번호는 필수입니다.',
+            minLength: { value: 8, message: '최소 8자 이상 입력해주세요.' },
+          })}
+          error={Boolean(errors.password)}
+          helperText={errors.password?.message}
+        ></TextField>
+
+        <TextField
+          fullWidth
+          name="confirmPassword"
+          label="Confirm Password"
+          type="password"
+          sx={{ marginBottom: 15 }}
+          {...register('confirmPassword', {
+            required: '비밀번호는 필수입니다.',
+            validate: (value) =>
+              value === password.current || '비밀번호가 일치하지 않습니다.',
+          })}
+          error={Boolean(errors.confirmPassword)}
+          helperText={errors.confirmPassword?.message}
+        ></TextField>
+        <Box>
+          <Button
+            onClick={handleSubmit(handleRegister)}
+            fullWidth
+            type="submit"
+            variant="contained"
+            sx={{ marginBottom: 10 }}
+          >
+            Sign up
+          </Button>
+        </Box>
+      </form>
     </Box>
   );
 }

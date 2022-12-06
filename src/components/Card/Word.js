@@ -2,7 +2,12 @@ import { Box, Button, Chip } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import WordCloud from 'react-d3-cloud';
 import { useDispatch, useSelector } from 'react-redux';
-import { filteredTag, setReviewPage, setWord } from '../../reduxSlice/appSlice';
+import {
+  filteredTag,
+  getId,
+  setReviewPage,
+  setWord,
+} from '../../reduxSlice/appSlice';
 
 export default function Word() {
   const word = useSelector((state) => state.appInfo.word);
@@ -19,8 +24,8 @@ export default function Word() {
       <Button
         variant="contained"
         onClick={() => {
-          // dispatch(setReviewPage(100));
-          // setIdx((prev) => prev + 100);
+          setIdx((prev) => prev + 100);
+          dispatch(setReviewPage({ idx }));
         }}
         sx={{ mb: 5 }}
       >

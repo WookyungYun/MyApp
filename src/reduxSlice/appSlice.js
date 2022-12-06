@@ -1,6 +1,10 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { result } from 'lodash';
 import { httpApi } from 'src/api/http';
+import {
+  getPostReview,
+  getPostSimilarApp,
+  getWordCloud,
+} from 'src/api/appsearch';
 
 export const appSlice = createSlice({
   name: 'appInfo',
@@ -12,7 +16,6 @@ export const appSlice = createSlice({
     review: [],
     similarApp: [],
     word: [],
-    filteredWord: [],
     reviewPage: 0,
     selectStore: 'apple',
     selectCountry: 'kr',
@@ -67,29 +70,24 @@ export const getId = createAsyncThunk(
       });
       thunkAPI.dispatch(setInfo(postInfo.data.result));
       if (postInfo.data.statusCode === 201) {
-        const url =
-          payload.store === 'apple' ? '/job/appreview' : '/job/gplayappreview';
-        const postReveiw = await httpApi.post(url, {
-          country: payload.country,
-          appId: res.data.result[0],
-        });
-        thunkAPI.dispatch(setReview(postReveiw.data.result));
-        const postSimilarApp = await httpApi.post('/job/similarappinfo', {
-          country: payload.country,
-          appId: res.data.result[0],
-        });
-        thunkAPI.dispatch(setSimilarApp(postSimilarApp.data.result));
-        const word = await httpApi.get('/job/wordcloud', {
-          params: {
-            country: payload.country,
-            appId: res.data.result[0],
-          },
-        });
-        const resultArray = Object.entries(word.data.result);
-        const wordObj = resultArray
-          .slice(1, 100)
-          .map((item) => ({ text: item[0], value: item[1] * 100 }));
-        thunkAPI.dispatch(setWord(wordObj));
+        const reviews = await getPostReview(
+          payload.store,
+          payload.country,
+          res.data.result[0]
+        );
+        thunkAPI.dispatch(setReview(reviews.data.result));
+
+        const similarAppInfo = await getPostSimilarApp(
+          payload.country,
+          res.data.result[0]
+        );
+        thunkAPI.dispatch(setSimilarApp(similarAppInfo.data.result));
+
+        const wordCloudObj = await getWordCloud(
+          payload.country,
+          res.data.result[0]
+        );
+        thunkAPI.dispatch(setWord(wordCloudObj));
       }
     } else {
       console.log('불러오기 실패');

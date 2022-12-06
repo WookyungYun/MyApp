@@ -1,7 +1,6 @@
 import { Box } from '@mui/system';
 import { useEffect, useState } from 'react';
 
-import { httpApi } from 'src/api/http';
 import { Card, Pagination } from '@mui/material';
 import { useSelector } from 'react-redux';
 
@@ -60,7 +59,7 @@ export default function AppReview() {
               <Box sx={{ display: 'flex', justifyContent: ' center' }}>
                 {review.length > 5 ? (
                   <Pagination
-                    count={Math.ceil(reviewData.length / item)}
+                    count={Math.ceil(review.length / item)}
                     page={page}
                     onChange={handlePageChange}
                   ></Pagination>
